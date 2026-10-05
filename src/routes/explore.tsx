@@ -78,7 +78,7 @@ function Explore() {
 
           <div className="mt-8">
             <h3 className="mb-2 font-medium">7-day dissolved oxygen</h3>
-            <DoChart data={w.history.map((v, i) => ({ label: days[i], value: v }))} />
+            <DoChart data={w.history.map((v, i) => ({ label: days[i] ?? "", value: v }))} />
             <p className="text-xs text-muted-foreground">Dashed line: 5 mg/L, below which many fish become stressed.</p>
           </div>
 
