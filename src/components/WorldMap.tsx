@@ -77,10 +77,10 @@ export function WorldMap() {
             const seen = new Set<string>();
             d.elements.forEach((e) => {
               const lat = e.center?.lat ?? e.lat; const lon = e.center?.lon ?? e.lon;
-              const name = e.tags?.name;
+              const name = e.tags?.["name"];
               if (lat == null || lon == null || !name || seen.has(name)) return;
               seen.add(name);
-              const kind = e.tags?.waterway === "river" ? "River" : e.tags?.water ? e.tags.water[0]!.toUpperCase() + e.tags.water.slice(1) : "Water body";
+              const kind = e.tags?.["waterway"] === "river" ? "River" : e.tags?.["water"] ? e.tags["water"][0]!.toUpperCase() + e.tags["water"].slice(1) : "Water body";
               L.circleMarker([lat, lon], { radius: 5, color: "#2b6cb0", fillColor: "#63b3ed", fillOpacity: 0.8, weight: 1 })
                 .bindPopup(`<b>${name}</b><br/>${kind}<br/><small>From OpenStreetMap · no readings yet</small>`)
                 .addTo(osmLayer.current!);
