@@ -1,74 +1,113 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Wind, Filter, Sandwich, Minus, Plus } from "lucide-react";
+import lake from "@/assets/lake.jpg";
+import river from "@/assets/river.jpg";
 
 export const Route = createFileRoute("/product")({
   head: () => ({
     meta: [
-      { title: "AquaSense Treatment Device — Buy" },
-      { name: "description", content: "A low-cost aeration and activated-carbon treatment system with sensors that report live to your AquaSense dashboard." },
-      { property: "og:title", content: "AquaSense Treatment Device" },
-      { property: "og:description", content: "Raise dissolved oxygen, reduce selected contaminants, and watch the results live." },
+      { title: "The AquaSense Kit — Clean water for $11.99" },
+      { name: "description", content: "An aeration pump and activated-carbon filter kit for ponds and small waterways — for less than the price of a sandwich." },
+      { property: "og:title", content: "The AquaSense Kit — $11.99" },
+      { property: "og:description", content: "Raise dissolved oxygen and filter impurities for less than an average sandwich." },
+      { property: "og:type", content: "product" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Product,
 });
 
-const plans = [
-  { id: "basic", name: "AquaSense Basic", price: 149, desc: "Aeration + carbon treatment", items: ["Air pump, tubing & diffuser", "Activated-carbon cartridge", "Ideal for ponds up to ¼ acre"] },
-  { id: "connected", name: "AquaSense Connected", price: 349, desc: "Treatment + live monitoring", featured: true, items: ["Everything in Basic", "DO, temperature, pH & turbidity sensors", "ESP32 link to your dashboard", "Change alerts"] },
-  { id: "carbon", name: "Carbon refill", price: 29, desc: "Replacement cartridge", items: ["Lasts ~3 months typical use", "Fits Basic & Connected"] },
-];
+const PRICE = 11.99;
+const SANDWICH = 12.5;
 
 function Product() {
-  const [cart, setCart] = useState<Record<string, number>>({});
+  const [qty, setQty] = useState(1);
   const [done, setDone] = useState(false);
-  const total = plans.reduce((s, p) => s + (cart[p.id] ?? 0) * p.price, 0);
-  const add = (id: string, n: number) => setCart((c) => ({ ...c, [id]: Math.max(0, (c[id] ?? 0) + n) }));
+  const total = (qty * PRICE).toFixed(2);
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12">
-      <p className="text-sm uppercase tracking-[0.2em] text-primary">The device</p>
-      <h1 className="mt-2 max-w-3xl font-display text-5xl sm:text-6xl">Clearer water you can measure.</h1>
-      <p className="mt-4 max-w-2xl text-muted-foreground">An air pump pushes air through a diffuser to raise dissolved oxygen, while a separate activated-carbon cartridge reduces selected, validated contaminants. The Connected model reports every reading to your treatment dashboard so you can see whether conditions are improving.</p>
+    <div>
+      <section className="relative overflow-hidden">
+        <img src={lake} alt="Clear mountain lake at sunrise" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/55 to-foreground/10" />
+        <div className="relative mx-auto max-w-6xl px-5 py-24 text-background sm:py-32">
+          <p className="text-sm uppercase tracking-[0.2em] opacity-80">The AquaSense Kit</p>
+          <h1 className="mt-3 max-w-2xl font-display text-5xl leading-tight sm:text-7xl">Clearer water for less than a sandwich.</h1>
+          <p className="mt-5 max-w-xl text-lg opacity-85">A pocket-sized aeration pump plus an activated-carbon filter. Oxygen in, impurities out — for just ${PRICE}.</p>
+          <a href="#buy" className="mt-8 inline-block rounded-full bg-background px-7 py-3 font-medium text-foreground">Get the kit — ${PRICE}</a>
+        </div>
+      </section>
 
-      <div className="mt-10 grid gap-3 rounded-3xl bg-secondary p-6 font-mono text-sm sm:grid-cols-4">
-        {["Air pump", "Tubing", "Diffuser", "Water"].map((s, i) => <div key={s} className="rounded-xl bg-card p-4 text-center">{i + 1}. {s}</div>)}
-      </div>
-
-      <div className="mt-12 grid gap-5 md:grid-cols-3">
-        {plans.map((p) => (
-          <div key={p.id} className={`flex flex-col rounded-3xl border p-7 ${p.featured ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>
-            <h3 className="font-display text-2xl">{p.name}</h3>
-            <p className="text-sm opacity-75">{p.desc}</p>
-            <div className="my-5 font-display text-5xl">${p.price}</div>
-            <ul className="flex-1 space-y-2 text-sm">
-              {p.items.map((i) => <li key={i} className="flex gap-2"><Check className="h-4 w-4 shrink-0" />{i}</li>)}
-            </ul>
-            <div className="mt-6 flex items-center gap-2">
-              <button onClick={() => add(p.id, -1)} className="h-10 w-10 rounded-full border border-current/30">−</button>
-              <span className="w-6 text-center">{cart[p.id] ?? 0}</span>
-              <button onClick={() => add(p.id, 1)} className={`flex-1 rounded-full py-2.5 text-sm font-medium ${p.featured ? "bg-background text-foreground" : "bg-primary text-primary-foreground"}`}>Add to order</button>
-            </div>
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="rounded-3xl border border-border bg-card p-8">
+            <Wind className="h-8 w-8 text-primary" />
+            <h3 className="mt-4 font-display text-3xl">Quiet aeration pump</h3>
+            <p className="mt-2 text-muted-foreground">Pushes tiny bubbles into the water to raise dissolved oxygen, so fish stay active and healthy. Adjustable flow, waterproof, and USB-powered.</p>
           </div>
-        ))}
-      </div>
+          <div className="rounded-3xl border border-border bg-card p-8">
+            <Filter className="h-8 w-8 text-primary" />
+            <h3 className="mt-4 font-display text-3xl">Activated-carbon filter</h3>
+            <p className="mt-2 text-muted-foreground">A carbon cartridge wrapped in fine fabric that traps impurities, odors and cloudiness as water passes through.</p>
+          </div>
+        </div>
+      </section>
 
-      <div className="mt-10 rounded-3xl border border-border bg-card p-7">
-        {done ? (
-          <p className="font-display text-2xl">Thanks! Your order request is in — we’ll be in touch to confirm shipping and payment.</p>
-        ) : (
-          <form onSubmit={(e) => { e.preventDefault(); if (total) setDone(true); }} className="flex flex-wrap items-center gap-3">
-            <div className="mr-auto">
-              <div className="text-sm text-muted-foreground">Order total</div>
-              <div className="font-display text-4xl">${total}</div>
-            </div>
-            <input required type="email" placeholder="Your email" className="rounded-full border border-input bg-background px-5 py-3 outline-none focus:border-primary" />
-            <button disabled={!total} className="rounded-full bg-foreground px-6 py-3 text-sm text-background disabled:opacity-40">Place order</button>
-          </form>
-        )}
-      </div>
-      <p className="mt-4 text-xs text-muted-foreground">Intended for appropriate managed waterways such as ponds and resort lakes. Not a substitute for official water-safety advisories.</p>
+      <section className="relative overflow-hidden">
+        <img src={river} alt="Clear river flowing over stones" width={1600} height={912} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-foreground/60" />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-5 py-20 text-background md:grid-cols-2">
+          <div>
+            <Sandwich className="h-10 w-10" />
+            <h2 className="mt-4 font-display text-5xl">Cheaper than lunch.</h2>
+            <p className="mt-3 max-w-md opacity-85">An average deli sandwich costs about ${SANDWICH.toFixed(2)}. The full AquaSense Kit costs less — and it keeps working long after lunch is gone.</p>
+          </div>
+          <div className="space-y-4 rounded-3xl bg-background/95 p-7 text-foreground">
+            {[["Average sandwich", SANDWICH], ["AquaSense Kit", PRICE]].map(([label, p]) => (
+              <div key={label as string}>
+                <div className="flex justify-between text-sm"><span>{label}</span><span className="font-medium">${(p as number).toFixed(2)}</span></div>
+                <div className="mt-1.5 h-3 rounded-full bg-secondary">
+                  <div className={`h-3 rounded-full ${label === "AquaSense Kit" ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ width: `${((p as number) / SANDWICH) * 100}%` }} />
+                </div>
+              </div>
+            ))}
+            <p className="text-sm text-muted-foreground">You save ${(SANDWICH - PRICE).toFixed(2)} — and get cleaner water.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="buy" className="mx-auto max-w-6xl px-5 py-16">
+        <div className="grid gap-8 rounded-3xl border border-border bg-card p-8 md:grid-cols-2 md:p-12">
+          <div>
+            <h2 className="font-display text-4xl">The AquaSense Kit</h2>
+            <div className="mt-3 font-display text-6xl text-primary">${PRICE}</div>
+            <ul className="mt-6 space-y-2 text-sm">
+              {["Aeration pump with adjustable flow", "Air tubing & bubble stone", "Activated-carbon filter cartridge", "Works with your AquaSense dashboard"].map((i) => (
+                <li key={i} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-primary" />{i}</li>
+              ))}
+            </ul>
+          </div>
+          {done ? (
+            <div className="flex items-center"><p className="font-display text-3xl">Thanks! Your order is in — we'll email you to confirm shipping and payment.</p></div>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); setDone(true); }} className="flex flex-col justify-center gap-4">
+              <div className="flex items-center justify-between rounded-2xl bg-secondary p-4">
+                <span className="text-sm">Quantity</span>
+                <div className="flex items-center gap-3">
+                  <button type="button" aria-label="Decrease" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card"><Minus className="h-4 w-4" /></button>
+                  <span className="w-6 text-center font-medium">{qty}</span>
+                  <button type="button" aria-label="Increase" onClick={() => setQty((q) => q + 1)} className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card"><Plus className="h-4 w-4" /></button>
+                </div>
+              </div>
+              <div className="flex items-baseline justify-between"><span className="text-muted-foreground">Total</span><span className="font-display text-4xl">${total}</span></div>
+              <input required type="email" placeholder="Your email" className="rounded-full border border-input bg-background px-5 py-3 outline-none focus:border-primary" />
+              <button className="rounded-full bg-primary py-3.5 font-medium text-primary-foreground">Buy now</button>
+            </form>
+          )}
+        </div>
+        <p className="mt-4 text-xs text-muted-foreground">For ponds and small managed waterways. Not a substitute for official water-safety advisories.</p>
+      </section>
     </div>
   );
 }
