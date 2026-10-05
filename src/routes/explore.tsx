@@ -1,0 +1,99 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import { useMemo, useState } from "react";
+import { days, doStatus, waterways } from "@/lib/waterways";
+import { DoChart } from "@/components/DoChart";
+
+export const Route = createFileRoute("/explore")({
+  validateSearch: z.object({ q: z.string().optional() }),
+  head: () => ({
+    meta: [
+      { title: "Explore Waterways — AquaSense" },
+      { name: "description", content: "Search lakes and rivers for dissolved oxygen, temperature, pH, advisories and 7-day trends." },
+      { property: "og:title", content: "Explore Waterways — AquaSense" },
+      { property: "og:description", content: "Current conditions, fishing outlook and recreation advisories for waterways near you." },
+    ],
+  }),
+  component: Explore,
+});
+
+const toneCls = { good: "bg-good/15 text-good", warn: "bg-warn/20 text-warn-foreground", bad: "bg-destructive/15 text-destructive" };
+
+function Explore() {
+  const { q: initial } = Route.useSearch();
+  const [q, setQ] = useState(initial ?? "");
+  const list = useMemo(() => waterways.filter((w) => (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q]);
+  const [sel, setSel] = useState(list[0]?.id ?? waterways[0].id);
+  const w = waterways.find((x) => x.id === sel)!;
+  const s = doStatus(w.do);
+
+  return (
+    <div className="mx-auto max-w-6xl px-5 py-12">
+      <h1 className="font-display text-5xl">Explore waterways</h1>
+      <p className="mt-2 text-muted-foreground">Sample readings shown — live public data feeds coming soon.</p>
+      <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr]">
+        <aside>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name or region" className="w-full rounded-xl border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
+          <ul className="mt-3 space-y-2">
+            {list.map((x) => {
+              const st = doStatus(x.do);
+              return (
+                <li key={x.id}>
+                  <button onClick={() => setSel(x.id)} className={`w-full rounded-xl border p-4 text-left transition ${x.id === sel ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/50"}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{x.name}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${toneCls[st.tone]}`}>{st.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{x.type} · {x.region}</span>
+                  </button>
+                </li>
+              );
+            })}
+            {list.length === 0 && <li className="p-4 text-sm text-muted-foreground">No waterways match.</li>}
+          </ul>
+        </aside>
+
+        <section className="rounded-3xl border border-border bg-card p-8">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">{w.type} · {w.region}</p>
+              <h2 className="font-display text-4xl">{w.name}</h2>
+            </div>
+            {w.treated && <span className="rounded-full bg-primary px-3 py-1 text-xs text-primary-foreground">AquaSense treated</span>}
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+            {[["Dissolved O₂", `${w.do} mg/L`], ["Temperature", `${w.temp}°C`], ["pH", w.ph], ["Turbidity", `${w.turbidity} NTU`]].map(([k, v]) => (
+              <div key={k as string} className="rounded-2xl bg-secondary p-4">
+                <div className="text-xs text-muted-foreground">{k}</div>
+                <div className="mt-1 font-display text-3xl">{v}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2 text-sm">
+            <span className={`rounded-full px-3 py-1 ${toneCls[s.tone]}`}>Oxygen: {s.label}</span>
+            <span className="rounded-full bg-secondary px-3 py-1">Trend: {w.trend}</span>
+          </div>
+
+          <div className="mt-8">
+            <h3 className="mb-2 font-medium">7-day dissolved oxygen</h3>
+            <DoChart data={w.history.map((v, i) => ({ label: days[i], value: v }))} />
+            <p className="text-xs text-muted-foreground">Dashed line: 5 mg/L, below which many fish become stressed.</p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-border p-5">
+              <h4 className="font-display text-xl">Fishing outlook</h4>
+              <p className="mt-1 text-sm text-muted-foreground">{w.fishing}</p>
+            </div>
+            <div className="rounded-2xl border border-border p-5">
+              <h4 className="font-display text-xl">Recreation</h4>
+              <p className="mt-1 text-sm text-muted-foreground">Official advisory: {w.advisory ?? "None found"}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
