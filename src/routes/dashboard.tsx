@@ -24,7 +24,7 @@ const devices = [
 const series = [4.2, 4.0, 4.3, 4.1, 4.4, 4.9, 5.4, 5.8, 6.1, 6.3, 6.4, 6.6, 6.5, 6.8].map((v, i) => ({ label: `D${i + 1}`, value: v }));
 
 function Dashboard() {
-  const [sel, setSel] = useState(devices[0].id);
+  const [sel, setSel] = useState(devices[0]!.id);
   const [live, setLive] = useState({ do: 6.8, sat: 78, temp: 18.9, ph: 7.4, turb: 3.8 });
   useEffect(() => {
     const t = setInterval(() => setLive((l) => ({ ...l, do: +(l.do + (Math.random() - 0.45) * 0.08).toFixed(2), temp: +(l.temp + (Math.random() - 0.5) * 0.05).toFixed(2) })), 2500);

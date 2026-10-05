@@ -23,7 +23,7 @@ function Explore() {
   const { q: initial } = Route.useSearch();
   const [q, setQ] = useState(initial ?? "");
   const list = useMemo(() => waterways.filter((w) => (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q]);
-  const [sel, setSel] = useState(list[0]?.id ?? waterways[0].id);
+  const [sel, setSel] = useState(list[0]?.id ?? waterways[0]!.id);
   const w = waterways.find((x) => x.id === sel)!;
   const s = doStatus(w.do);
 
