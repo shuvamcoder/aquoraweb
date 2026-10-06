@@ -111,7 +111,7 @@ function Product() {
               </label>
               <div className="flex items-baseline justify-between"><span className="text-muted-foreground">Total</span><span className="font-display text-4xl">${total}</span></div>
               <input required type="email" placeholder="Your email" className="rounded-full border border-input bg-background px-5 py-3 outline-none focus:border-primary" />
-              <button className="rounded-full bg-primary py-3.5 font-medium text-primary-foreground">Buy now</button>
+              <button disabled={!qtyValid} className="rounded-full bg-primary py-3.5 font-medium text-primary-foreground disabled:opacity-50">Buy now</button>
             </form>
           )}
         </div>
