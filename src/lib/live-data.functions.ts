@@ -29,26 +29,29 @@ export const getUsgsNearby = createServerFn({ method: "GET" })
         return ((await res.json()) as { features?: Feature[] }).features ?? [];
       });
     try {
-      const [latest, sites] = await Promise.all([
-        q("latest-continuous", `&parameter_code=${Object.keys(PARAMS).join(",")}`),
-        q("monitoring-locations", "&properties=id,monitoring_location_name"),
-      ]);
-      const names = new Map(sites.map((f) => [String(f.properties.id), String(f.properties.monitoring_location_name ?? "")]));
+      const latest = await q("latest-continuous", `&parameter_code=${Object.keys(PARAMS).join(",")}`);
+      const names = new Map<string, string>();
       const byId = new Map<string, UsgsStation>();
       for (const f of latest) {
         const p = f.properties;
-        const v = p.value == null ? NaN : Number(p.value);
-        const meta = PARAMS[String(p.parameter_code)];
+        const v = p['value'] == null ? NaN : Number(p['value']);
+        const meta = PARAMS[String(p['parameter_code'])];
         if (!meta || !Number.isFinite(v)) continue;
-        const id = String(p.monitoring_location_id);
+        const id = String(p['monitoring_location_id']);
         const st = byId.get(id) ?? { id, name: names.get(id) || id, readings: [] };
-        if (!st.readings.some((x) => x.code === p.parameter_code))
-          st.readings.push({ code: String(p.parameter_code), ...meta, value: v, time: String(p.time) });
+        if (!st.readings.some((x) => x.code === p['parameter_code']))
+          st.readings.push({ code: String(p['parameter_code']), ...meta, value: v, time: String(p['time']) });
         byId.set(id, st);
       }
       const stations = [...byId.values()]
         .sort((a, b) => b.readings.length - a.readings.length)
         .slice(0, 8);
+      await Promise.all(stations.map(async (st) => {
+        try {
+          const r = await fetch(`${BASE}/monitoring-locations/items/${st.id}?f=json${key ? `&api_key=${key}` : ""}`);
+          if (r.ok) { const j = (await r.json()) as Feature; const n = j.properties['monitoring_location_name']; if (n) st.name = String(n); }
+        } catch { /* keep id as name */ }
+      }));
       return { stations, error: null };
     } catch (e) {
       return { stations: [], error: e instanceof Error ? e.message : "USGS data unavailable" };
