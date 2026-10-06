@@ -20,7 +20,7 @@ type Feature = { properties: Record<string, unknown> };
 export const getUsgsNearby = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ lat: z.number().min(-90).max(90), lon: z.number().min(-180).max(180) }).parse(d))
   .handler(async ({ data }): Promise<{ stations: UsgsStation[]; error: string | null }> => {
-    const key = process.env.USGS_API_KEY;
+    const key = process.env['USGS_API_KEY'];
     const r = 0.6;
     const bbox = [data.lon - r, data.lat - r, data.lon + r, data.lat + r].map((n) => n.toFixed(3)).join(",");
     const q = (path: string, extra: string) =>
