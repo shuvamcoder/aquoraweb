@@ -3,6 +3,7 @@ import { z } from "zod";
 import { useMemo, useState } from "react";
 import { days, doStatus, waterways } from "@/lib/waterways";
 import { DoChart } from "@/components/DoChart";
+import { LiveData } from "@/components/LiveData";
 
 export const Route = createFileRoute("/explore")({
   validateSearch: z.object({ q: z.string().optional() }),
@@ -30,7 +31,7 @@ function Explore() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="font-display text-5xl">Explore waterways</h1>
-      <p className="mt-2 text-muted-foreground">Sample readings shown — live public data feeds coming soon.</p>
+      <p className="mt-2 text-muted-foreground">Summary readings are samples; live USGS station data and weather load for each waterway below.</p>
       <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr]">
         <aside>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name or region" className="w-full rounded-xl border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
@@ -92,6 +93,7 @@ function Explore() {
               <p className="mt-1 text-sm text-muted-foreground">Official advisory: {w.advisory ?? "None found"}</p>
             </div>
           </div>
+          <LiveData lat={w.lat} lon={w.lon} />
         </section>
       </div>
     </div>

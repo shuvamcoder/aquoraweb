@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, Wind, Filter, Sandwich, Minus, Plus } from "lucide-react";
+import { Check, Wind, Filter, Sandwich } from "lucide-react";
 import lake from "@/assets/lake.jpg";
 import river from "@/assets/river.jpg";
+import kit from "@/assets/kit.jpg";
 
 export const Route = createFileRoute("/product")({
   head: () => ({
@@ -22,9 +23,11 @@ const PRICE = 11.99;
 const SANDWICH = 12.5;
 
 function Product() {
-  const [qty, setQty] = useState(1);
+  const [qtyText, setQtyText] = useState("1");
   const [done, setDone] = useState(false);
-  const total = (qty * PRICE).toFixed(2);
+  const qty = Number(qtyText);
+  const qtyValid = /^\d+$/.test(qtyText) && qty >= 1 && qty <= 999;
+  const total = ((qtyValid ? qty : 0) * PRICE).toFixed(2);
 
   return (
     <div>
@@ -80,6 +83,7 @@ function Product() {
       <section id="buy" className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid gap-8 rounded-3xl border border-border bg-card p-8 md:grid-cols-2 md:p-12">
           <div>
+            <img src={kit} alt="AquaSense Kit: mini aeration pump, tubing, bubble stone and carbon filter" width={1200} height={1008} loading="lazy" className="mb-6 aspect-[6/5] w-full rounded-2xl object-cover" />
             <h2 className="font-display text-4xl">The AquaSense Kit</h2>
             <div className="mt-3 font-display text-6xl text-primary">${PRICE}</div>
             <ul className="mt-6 space-y-2 text-sm">
@@ -91,18 +95,23 @@ function Product() {
           {done ? (
             <div className="flex items-center"><p className="font-display text-3xl">Thanks! Your order is in — we'll email you to confirm shipping and payment.</p></div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setDone(true); }} className="flex flex-col justify-center gap-4">
-              <div className="flex items-center justify-between rounded-2xl bg-secondary p-4">
-                <span className="text-sm">Quantity</span>
-                <div className="flex items-center gap-3">
-                  <button type="button" aria-label="Decrease" onClick={() => setQty((q) => Math.max(1, q - 1))} className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card"><Minus className="h-4 w-4" /></button>
-                  <span className="w-6 text-center font-medium">{qty}</span>
-                  <button type="button" aria-label="Increase" onClick={() => setQty((q) => q + 1)} className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card"><Plus className="h-4 w-4" /></button>
-                </div>
-              </div>
+            <form onSubmit={(e) => { e.preventDefault(); if (qtyValid) setDone(true); }} className="flex flex-col justify-center gap-4">
+              <label className="flex flex-col gap-2 rounded-2xl bg-secondary p-4">
+                <span className="text-sm font-medium">Number of Kits</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={qtyText}
+                  onChange={(e) => setQtyText(e.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                  aria-invalid={!qtyValid}
+                  className={`rounded-full border bg-background px-5 py-3 outline-none focus:border-primary ${qtyValid ? "border-input" : "border-destructive"}`}
+                />
+                {!qtyValid && <span className="text-xs text-destructive">Enter a whole number from 1 to 999.</span>}
+              </label>
               <div className="flex items-baseline justify-between"><span className="text-muted-foreground">Total</span><span className="font-display text-4xl">${total}</span></div>
               <input required type="email" placeholder="Your email" className="rounded-full border border-input bg-background px-5 py-3 outline-none focus:border-primary" />
-              <button className="rounded-full bg-primary py-3.5 font-medium text-primary-foreground">Buy now</button>
+              <button disabled={!qtyValid} className="rounded-full bg-primary py-3.5 font-medium text-primary-foreground disabled:opacity-50">Buy now</button>
             </form>
           )}
         </div>
