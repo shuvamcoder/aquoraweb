@@ -87,7 +87,7 @@ function Product() {
             <h2 className="font-display text-4xl">The AquaSense Kit</h2>
             <div className="mt-3 font-display text-6xl text-primary">${PRICE}</div>
             <ul className="mt-6 space-y-2 text-sm">
-              {["Aeration pump with adjustable flow", "Air tubing & bubble stone", "Activated-carbon filter cartridge", "Works with your AquaSense dashboard"].map((i) => (
+              {["Aeration pump with adjustable flow", "Air tubing & bubble stone", "Activated-carbon filter cartridge", "Track improvement on the AquaSense world map"].map((i) => (
                 <li key={i} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-primary" />{i}</li>
               ))}
             </ul>

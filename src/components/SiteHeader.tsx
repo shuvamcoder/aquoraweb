@@ -4,7 +4,6 @@ import { Droplets } from "lucide-react";
 const links = [
   { to: "/explore", label: "Explore waterways" },
   { to: "/map", label: "World map" },
-  { to: "/dashboard", label: "Treatment dashboard" },
   { to: "/product", label: "The device" },
 ] as const;
 

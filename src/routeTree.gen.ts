@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as ProductRouteImport } from './routes/product'
@@ -18,11 +17,6 @@ import { Route as ProductRouteImport } from './routes/product'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -43,14 +37,12 @@ const ProductRoute = ProductRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
   '/product': typeof ProductRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
   '/product': typeof ProductRoute
@@ -58,22 +50,20 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
   '/product': typeof ProductRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/explore' | '/map' | '/product'
+  fullPaths: '/' | '/explore' | '/map' | '/product'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/explore' | '/map' | '/product'
-  id: '__root__' | '/' | '/dashboard' | '/explore' | '/map' | '/product'
+  to: '/' | '/explore' | '/map' | '/product'
+  id: '__root__' | '/' | '/explore' | '/map' | '/product'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
   ExploreRoute: typeof ExploreRoute
   MapRoute: typeof MapRoute
   ProductRoute: typeof ProductRoute
@@ -86,13 +76,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -121,7 +104,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
   ExploreRoute: ExploreRoute,
   MapRoute: MapRoute,
   ProductRoute: ProductRoute,

@@ -72,3 +72,43 @@ export const getWeather = createServerFn({ method: "GET" })
       return { weather: null, error: e instanceof Error ? e.message : "Weather unavailable" };
     }
   });
+
+export type UsgsPoint = { id: string; lat: number; lon: number; readings: { label: string; unit: string; value: number; time: string }[] };
+
+export const getUsgsInBox = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ w: z.number(), s: z.number(), e: z.number(), n: z.number() }).parse(d))
+  .handler(async ({ data }): Promise<{ points: UsgsPoint[]; error: string | null }> => {
+    const key = process.env['USGS_API_KEY'];
+    const bbox = [data.w, data.s, data.e, data.n].map((x) => x.toFixed(3)).join(",");
+    try {
+      const res = await fetch(`${BASE}/latest-continuous/items?f=json&limit=10000&bbox=${bbox}&parameter_code=${Object.keys(PARAMS).join(",")}${key ? `&api_key=${key}` : ""}`);
+      if (!res.ok) throw new Error(`USGS responded ${res.status}`);
+      const j = (await res.json()) as { features?: { geometry?: { coordinates?: number[] }; properties: Record<string, unknown> }[] };
+      const byId = new Map<string, UsgsPoint>();
+      for (const f of j.features ?? []) {
+        const p = f.properties; const c = f.geometry?.coordinates;
+        const meta = PARAMS[String(p['parameter_code'])];
+        const v = p['value'] == null ? NaN : Number(p['value']);
+        if (!meta || !c || !Number.isFinite(v)) continue;
+        const id = String(p['monitoring_location_id']);
+        const pt = byId.get(id) ?? { id, lat: c[1]!, lon: c[0]!, readings: [] };
+        if (!pt.readings.some((r) => r.label === meta.label)) pt.readings.push({ ...meta, value: v, time: String(p['time']) });
+        byId.set(id, pt);
+      }
+      return { points: [...byId.values()], error: null };
+    } catch (e) {
+      return { points: [], error: e instanceof Error ? e.message : "USGS data unavailable" };
+    }
+  });
+
+export const getUsgsName = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ id: z.string().regex(/^[A-Za-z0-9-]+$/) }).parse(d))
+  .handler(async ({ data }) => {
+    const key = process.env['USGS_API_KEY'];
+    try {
+      const r = await fetch(`${BASE}/monitoring-locations/items/${data.id}?f=json${key ? `&api_key=${key}` : ""}`);
+      if (!r.ok) return { name: null };
+      const j = (await r.json()) as { properties: Record<string, unknown> };
+      return { name: j.properties['monitoring_location_name'] ? String(j.properties['monitoring_location_name']) : null };
+    } catch { return { name: null }; }
+  });
