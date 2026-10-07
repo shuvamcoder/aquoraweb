@@ -46,10 +46,14 @@ export function WorldMap() {
       const L = (mod as unknown as { default?: typeof Leaflet }).default ?? (mod as unknown as typeof Leaflet);
       if (cancelled || !el.current || mapRef.current) return;
       LRef.current = L;
-      const map = L.map(el.current, { worldCopyJump: true }).setView([25, 0], 2);
+      const map = L.map(el.current, { worldCopyJump: true, preferCanvas: true }).setView([25, 0], 2);
       mapRef.current = map;
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors", maxZoom: 18,
+      }).addTo(map);
+      // Worldwide water overlay so every lake, river and stream is visible at any zoom
+      L.tileLayer("https://tiles.arcgis.com/tiles/P3ePLMYs2RVChkJx/arcgis/rest/services/Esri_Hydro_Reference_Overlay/MapServer/tile/{z}/{y}/{x}", {
+        attribution: "Hydro overlay © Esri", maxZoom: 18, opacity: 0.9,
       }).addTo(map);
       osmLayer.current = L.layerGroup().addTo(map);
       userLayer.current = L.layerGroup().addTo(map);
@@ -62,30 +66,41 @@ export function WorldMap() {
           .addTo(map);
       });
 
+      const label = (t: Record<string, string> = {}) => {
+        const ww = t["waterway"]; const wa = t["water"];
+        if (ww) return ww[0]!.toUpperCase() + ww.slice(1);
+        if (wa) return wa[0]!.toUpperCase() + wa.slice(1);
+        if (t["natural"] === "wetland") return "Wetland";
+        if (t["landuse"] === "reservoir") return "Reservoir";
+        if (t["natural"] === "bay") return "Bay";
+        return "Water body";
+      };
+
       const fetchWater = () => {
-        if (map.getZoom() < 9) { osmLayer.current?.clearLayers(); setStatus("Zoom in closer to discover named lakes and rivers."); return; }
+        const z = map.getZoom();
+        if (z < 8) { osmLayer.current?.clearLayers(); setStatus("All of the world's waterways are shown in blue. Zoom in to click on individual lakes, rivers and streams."); return; }
         const b = map.getBounds();
         const bbox = `${b.getSouth()},${b.getWest()},${b.getNorth()},${b.getEast()}`;
-        const q = `[out:json][timeout:20];(way["natural"="water"]["name"](${bbox});relation["natural"="water"]["name"](${bbox});way["waterway"="river"]["name"](${bbox}););out center 200;`;
+        const nameFilter = z < 11 ? `["name"]` : "";
+        const q = `[out:json][timeout:25];(nwr["natural"~"^(water|wetland|bay|spring)$"]${nameFilter}(${bbox});nwr["landuse"="reservoir"]${nameFilter}(${bbox});way["waterway"~"^(river|stream|canal|brook|creek|drain|ditch|tidal_channel)$"]${nameFilter}(${bbox});node["natural"="spring"](${bbox}););out center tags;`;
         ctrl?.abort();
         ctrl = new AbortController();
-        setStatus("Searching for waterways in this area…");
+        setStatus("Loading every waterway in this area…");
         fetch("https://overpass-api.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(q), signal: ctrl.signal })
           .then((r) => r.json())
-          .then((d: { elements: { id: number; center?: { lat: number; lon: number }; lat?: number; lon?: number; tags?: Record<string, string> }[] }) => {
+          .then((d: { elements: { id: number; type: string; center?: { lat: number; lon: number }; lat?: number; lon?: number; tags?: Record<string, string> }[] }) => {
             osmLayer.current?.clearLayers();
-            const seen = new Set<string>();
+            let n = 0;
             d.elements.forEach((e) => {
               const lat = e.center?.lat ?? e.lat; const lon = e.center?.lon ?? e.lon;
-              const name = e.tags?.["name"];
-              if (lat == null || lon == null || !name || seen.has(name)) return;
-              seen.add(name);
-              const kind = e.tags?.["waterway"] === "river" ? "River" : e.tags?.["water"] ? e.tags["water"][0]!.toUpperCase() + e.tags["water"].slice(1) : "Water body";
-              L.circleMarker([lat, lon], { radius: 5, color: "#2b6cb0", fillColor: "#63b3ed", fillOpacity: 0.8, weight: 1 })
-                .bindPopup(`<b>${name}</b><br/>${kind}<br/><small>From OpenStreetMap · no readings yet</small>`)
+              if (lat == null || lon == null) return;
+              n++;
+              const name = (e.tags?.["name"] ?? "Unnamed").replace(/</g, "&lt;");
+              L.circleMarker([lat, lon], { radius: 4, color: "#2b6cb0", fillColor: "#63b3ed", fillOpacity: 0.8, weight: 1 })
+                .bindPopup(`<b>${name}</b><br/>${label(e.tags)}<br/><small>From OpenStreetMap · no readings yet</small>`)
                 .addTo(osmLayer.current!);
             });
-            setStatus(`${seen.size} named waterways found in this view.`);
+            setStatus(`${n} waterways found in this view${z < 11 ? " (zoom in further to include unnamed ponds and streams)" : ""}.`);
           })
           .catch((err) => { if (err.name !== "AbortError") setStatus("Waterway lookup is busy — move the map to try again."); });
       };
