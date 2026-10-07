@@ -88,10 +88,10 @@ function Home() {
           <div className="p-8 sm:p-10">
             <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The AquaSense Kit</span>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">Clearer water for less than a sandwich.</h2>
-            <p className="mt-3 text-muted-foreground">An aeration pump and carbon filter for ponds and small waterways — tracked on your dashboard.</p>
+            <p className="mt-3 text-muted-foreground">An aeration pump and carbon filter for ponds and small waterways — with results shown on the world map.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/product" className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground">Get the kit — $11.99</Link>
-              <Link to="/dashboard" className="rounded-full border border-border px-6 py-3 text-sm">See the dashboard</Link>
+              <Link to="/map" className="rounded-full border border-border px-6 py-3 text-sm">See results on the map</Link>
             </div>
           </div>
         </div>
