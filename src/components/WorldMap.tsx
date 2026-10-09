@@ -9,15 +9,6 @@ const emptyForm = { name: "", type: "Lake", note: "", do: "", temp: "", ph: "", 
 const improvement = (before?: number, after?: number) => before && after ? Math.round(((after - before) / before) * 100) : null;
 const KEY = "aquasense-user-waterways";
 
-// Approximate locations for the sample waterways
-const sampleCoords: Record<string, [number, number]> = {
-  "lake-mirren": [45.9, -89.7],
-  "cedar-river": [41.98, -91.67],
-  "pine-hollow": [39.95, -75.6],
-  "silver-reservoir": [39.1, -120.9],
-  "willow-bay": [28.8, -81.7],
-  "brandt-creek": [40.02, -105.3],
-};
 
 function loadSpots(): UserSpot[] {
   try { return JSON.parse(localStorage.getItem(KEY) ?? "[]"); } catch { return []; }
@@ -66,10 +57,9 @@ export function WorldMap() {
       usgsLayer.current = L.layerGroup().addTo(map);
 
       waterways.forEach((w) => {
-        const c = sampleCoords[w.id];
-        if (!c) return;
+        const c: [number, number] = [w.lat, w.lon];
         L.circleMarker(c, { radius: 9, color: "#0e6b80", fillColor: "#1aa3b8", fillOpacity: 0.9, weight: 2 })
-          .bindPopup(`<b>${w.name}</b><br/>${w.type} · ${w.region}<br/>Oxygen: ${w.do} mg/L · ${w.temp}°C · pH ${w.ph} · ${w.turbidity} NTU<br/>${w.treated ? `<b style="color:#2f855a">Treated · oxygen ${improvement(w.history[0], w.history[w.history.length-1])! >= 0 ? "+" : ""}${improvement(w.history[0], w.history[w.history.length-1])}% this week</b><br/>` : `Trend: ${w.trend}<br/>`}<a href="/explore?q=${encodeURIComponent(w.name)}">See full conditions →</a>`)
+          .bindPopup(`<b>${w.name}</b><br/>${w.type} · ${w.region}<br/><small style="opacity:.7">AquaSense sample reading</small><br/>Oxygen: ${w.do} mg/L · ${w.temp}°C · pH ${w.ph} · ${w.turbidity} NTU<br/>${w.treated ? `<b style="color:#2f855a">Treated · oxygen ${improvement(w.history[0], w.history[w.history.length-1])! >= 0 ? "+" : ""}${improvement(w.history[0], w.history[w.history.length-1])}% this week</b><br/>` : `Trend: ${w.trend}<br/>`}<a href="/explore?q=${encodeURIComponent(w.name)}">See full conditions →</a>`)
           .addTo(map);
       });
 
@@ -184,7 +174,7 @@ export function WorldMap() {
           <button className="rounded-full bg-primary px-5 text-sm text-primary-foreground">Go</button>
         </form>
         <div className={`relative overflow-hidden rounded-3xl border border-border ${addMode ? "cursor-crosshair ring-2 ring-primary" : ""}`}>
-          <div ref={el} className="h-[560px] w-full" />
+          <div ref={el} className="h-[620px] w-full" />
         </div>
         <p className="mt-2 text-sm text-muted-foreground">{status}</p>
         <p className="text-sm text-muted-foreground">{usgsStatus}</p>
