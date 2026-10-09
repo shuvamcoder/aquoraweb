@@ -15,7 +15,7 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
         <h4 className="flex items-center gap-2 font-display text-xl"><CloudSun className="h-5 w-5 text-primary" /> Weather right now</h4>
         {w.isLoading ? <Loading /> : w.data?.weather ? (
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 text-sm">
-            {[["Air", `${w.data.weather.temperature_2m}°C`], ["Wind", `${w.data.weather.wind_speed_10m} km/h`], ["Rain", `${w.data.weather.precipitation} mm`], ["Clouds", `${w.data.weather.cloud_cover}%`]].map(([k, v]) => (
+            {[["Air", `${w.data.weather.temperature_2m}°C`], ["Wind", `${w.data.weather.wind_speed_10m} km/h`], ["Rain", `${w.data.weather.precipitation} mm`], ["Clouds", `${w.data.weather.cloud_cover}%`], ...(w.data.weather.sea_surface_temperature != null ? [["Sea surface", `${w.data.weather.sea_surface_temperature}°C`]] : [])].map(([k, v]) => (
               <div key={k} className="rounded-xl bg-secondary p-3"><div className="text-xs text-muted-foreground">{k}</div><div className="font-medium">{v}</div></div>
             ))}
           </div>

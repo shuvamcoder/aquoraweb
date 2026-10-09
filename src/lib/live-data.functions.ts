@@ -67,7 +67,12 @@ export const getWeather = createServerFn({ method: "GET" })
       );
       if (!res.ok) throw new Error(`Weather service responded ${res.status}`);
       const j = (await res.json()) as { current: { temperature_2m: number; wind_speed_10m: number; precipitation: number; cloud_cover: number } };
-      return { weather: j.current, error: null };
+      let seaTemp: number | null = null;
+      try {
+        const m = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${data.lat}&longitude=${data.lon}&current=sea_surface_temperature`);
+        if (m.ok) { const mj = (await m.json()) as { current?: { sea_surface_temperature?: number | null } }; seaTemp = mj.current?.sea_surface_temperature ?? null; }
+      } catch { /* inland waters have no marine data */ }
+      return { weather: { ...j.current, sea_surface_temperature: seaTemp }, error: null };
     } catch (e) {
       return { weather: null, error: e instanceof Error ? e.message : "Weather unavailable" };
     }
