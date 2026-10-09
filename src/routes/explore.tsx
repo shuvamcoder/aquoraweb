@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { useMemo, useState } from "react";
-import { days, doStatus, waterways } from "@/lib/waterways";
+import { continentOf, continents, days, doStatus, waterways } from "@/lib/waterways";
 import { DoChart } from "@/components/DoChart";
 import { LiveData } from "@/components/LiveData";
 
@@ -23,7 +23,8 @@ const toneCls = { good: "bg-good/15 text-good", warn: "bg-warn/20 text-warn-fore
 function Explore() {
   const { q: initial } = Route.useSearch();
   const [q, setQ] = useState(initial ?? "");
-  const list = useMemo(() => waterways.filter((w) => (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q]);
+  const [cont, setCont] = useState("All");
+  const list = useMemo(() => waterways.filter((w) => (cont === "All" || continentOf(w) === cont) && (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q, cont]);
   const [sel, setSel] = useState(list[0]?.id ?? waterways[0]!.id);
   const w = waterways.find((x) => x.id === sel)!;
   const s = doStatus(w.do);
@@ -31,11 +32,13 @@ function Explore() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="font-display text-5xl">Explore waterways</h1>
-      <p className="mt-2 text-muted-foreground">Summary readings are samples; live USGS station data and weather load for each waterway below.</p>
+      <p className="mt-2 max-w-2xl text-muted-foreground">{waterways.length} waterways across six continents. Summary readings are AquaSense samples — live USGS station data (US only) and weather load for each waterway below.</p>
+      <div className="mt-6 flex flex-wrap gap-2">{continents.map((c) => <button key={c} onClick={() => setCont(c)} className={`rounded-full border px-4 py-1.5 text-sm transition ${cont === c ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-primary/60"}`}>{c}</button>)}</div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr]">
         <aside>
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name or region" className="w-full rounded-xl border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
-          <ul className="mt-3 space-y-2">
+          <p className="mt-3 text-xs text-muted-foreground">{list.length} shown</p>
+          <ul className="mt-2 max-h-[720px] space-y-2 overflow-y-auto pr-1">
             {list.map((x) => {
               const st = doStatus(x.do);
               return (
