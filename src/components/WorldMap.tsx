@@ -121,7 +121,7 @@ export function WorldMap() {
             const observation: Observation = { id: `usgs-${pt.id}`, name: `USGS ${pt.id}`, source: "USGS · provisional", lat: pt.lat, lon: pt.lon, time: pt.readings[0]?.time, oxygen: read("oxygen"), temperature: read("temperature"), ph: read("ph") };
             m.on("click", () => setSelected(observation));
             m.on("popupopen", () => {
-              getUsgsName({ data: { id: pt.id } }).then((n) => { if (n.name) { setSelected((current) => current?.id === observation.id ? { ...current, name: n.name } : current); m.setPopupContent(`<b>${esc(n.name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]?.time ?? "").toLocaleString()}</small>`); } });
+              getUsgsName({ data: { id: pt.id } }).then((n) => { const name = n.name; if (name) { setSelected((current) => current?.id === observation.id ? { ...current, name } : current); m.setPopupContent(`<b>${esc(name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]?.time ?? "").toLocaleString()}</small>`); } });
             });
           });
           setUsgsStatus(`${r.points.length} USGS monitoring stations with live stats in this view (USGS covers the US).`);

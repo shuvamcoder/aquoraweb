@@ -2,9 +2,9 @@ import type { Waterway } from "@/lib/waterways";
 
 export type Observation = {
   id: string; name: string; source: string; sample?: boolean;
-  lat: number; lon: number; time?: string;
-  oxygen?: number; temperature?: number; ph?: number; turbidity?: number;
-  previousOxygen?: number; previousLabel?: string; currentLabel?: string;
+  lat: number; lon: number; time?: string | undefined;
+  oxygen?: number | undefined; temperature?: number | undefined; ph?: number | undefined; turbidity?: number | undefined;
+  previousOxygen?: number | undefined; previousLabel?: string; currentLabel?: string;
 };
 export const metrics = [
   { key: "oxygen", label: "Dissolved oxygen", unit: "mg/L", max: 15, explanation: "Oxygen dissolved in water supports fish and other aquatic life. Below 5 mg/L can stress many fish; it does not determine drinking or swimming safety." },
