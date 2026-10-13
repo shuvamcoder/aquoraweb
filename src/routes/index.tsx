@@ -34,9 +34,9 @@ function Home() {
     <div>
       <section className="relative overflow-hidden">
         <img src={lake} alt="Calm lake at sunrise" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/45 to-background" />
-        <div className="relative mx-auto max-w-6xl px-5 pb-28 pt-20 text-background sm:pt-28">
-          <span className="inline-flex items-center gap-2 rounded-full border border-background/30 bg-background/10 px-3 py-1 text-xs uppercase tracking-[0.2em] backdrop-blur">
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/60 to-background" />
+        <div className="relative mx-auto max-w-6xl px-5 pb-28 pt-20 text-foreground sm:pt-28">
+          <span className="inline-flex items-center gap-2 rounded-full border border-foreground/30 bg-foreground/10 px-3 py-1 text-xs uppercase tracking-[0.2em] backdrop-blur">
             <Radio className="h-3.5 w-3.5" /> Live water data
           </span>
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[1.02] sm:text-7xl">What do you want to know about your water?</h1>
