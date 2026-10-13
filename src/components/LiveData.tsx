@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CloudSun, Loader2, Radio } from "lucide-react";
 import { getUsgsNearby, getWeather } from "@/lib/live-data.functions";
+import { WaterProfile } from "@/components/WaterProfile";
 
 export function LiveData({ lat, lon }: { lat: number; lon: number }) {
   const usgs = useServerFn(getUsgsNearby);
@@ -39,6 +40,10 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
                     <span key={r.code} className="rounded-full bg-secondary px-2.5 py-1 text-xs">{r.label}: <b>{r.value}</b> {r.unit}</span>
                   ))}
                 </div>
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-sm text-primary">Station fingerprint & comparison</summary>
+                  <div className="mt-4"><WaterProfile observation={{ id: `usgs-${s.id}`, name: s.name, source: "USGS · provisional", lat, lon, time: s.readings[0]?.time, oxygen: s.readings.find((r) => r.code === "00300")?.value != null ? Number(s.readings.find((r) => r.code === "00300")?.value) : undefined, temperature: s.readings.find((r) => r.code === "00010")?.value != null ? Number(s.readings.find((r) => r.code === "00010")?.value) : undefined, ph: s.readings.find((r) => r.code === "00400")?.value != null ? Number(s.readings.find((r) => r.code === "00400")?.value) : undefined }} /></div>
+                </details>
               </li>
             ))}
           </ul>
