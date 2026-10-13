@@ -2,15 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Bell, Compass, Fish, Radio, Search, ShieldCheck, Waves } from "lucide-react";
 import { useState } from "react";
 import lake from "@/assets/lake.jpg";
-import kit from "@/assets/kit.jpg";
+import kit from "@/assets/kit-battery.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Aquora — Know your water before you go" },
-      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and track Aquora treatment devices." },
+      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and record manual measurements with the battery-powered $11.99 Aquora kit." },
       { property: "og:title", content: "Aquora — Know your water before you go" },
-      { property: "og:description", content: "Water-health info for anglers, swimmers and pond owners, plus low-cost treatment you can track live." },
+      { property: "og:description", content: "Water-health info for anglers, swimmers and pond owners, plus affordable battery-powered water care and manual measuring tools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -25,7 +25,7 @@ const intents = [
   { icon: Bell, title: "Alerts", text: "Know when measured conditions change significantly." },
 ];
 
-const stats = [["Live", "USGS station readings"], ["4", "Key water measures"], ["$11.99", "Treatment kit"]];
+const stats = [["Live", "USGS station readings"], ["4", "Key water measures"], ["$11.99", "Battery-powered kit"]];
 
 function Home() {
   const [q, setQ] = useState("");
@@ -72,7 +72,7 @@ function Home() {
 
       <section className="mx-auto max-w-6xl px-5">
         <div className="grid gap-10 rounded-[2rem] bg-primary p-8 text-primary-foreground sm:p-12 md:grid-cols-3">
-          {[["Measure", "USGS stations and sensors track dissolved oxygen, pH, temperature and flow."], ["Understand", "Plain-language dashboards turn science into ‘good day to fish?’ answers."], ["Treat", "Aeration and activated carbon improve conditions in managed water."]].map(([t, d], i) => (
+          {[["Measure", "USGS stations and sensors track dissolved oxygen, pH, temperature and flow."], ["Understand", "Water fingerprints and comparisons put measurements in context."], ["Treat", "Aeration and activated carbon improve conditions in managed water."]].map(([t, d], i) => (
             <div key={t} className="border-t border-primary-foreground/25 pt-5">
               <span className="text-sm opacity-70">0{i + 1}</span>
               <h3 className="font-display text-3xl">{t}</h3>
@@ -84,11 +84,12 @@ function Home() {
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="grid items-center gap-10 overflow-hidden rounded-[2rem] border border-border bg-card md:grid-cols-2">
-          <img src={kit} alt="Aquora Kit" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
+          <img src={kit} alt="Aquora kit concept: batteries, pump, carbon filter, thermometer, pH strips and sample vial" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
           <div className="p-8 sm:p-10">
             <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The Aquora Kit</span>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">Clearer water for less than a sandwich.</h2>
-            <p className="mt-3 text-muted-foreground">An aeration pump and carbon filter for ponds and small waterways — with results shown on the world map.</p>
+            <p className="mt-3 text-muted-foreground">A battery-powered aeration pump, carbon filter, thermometer, pH strips and sample vial — still $11.99. Record your own measurements on the world map.</p>
+            <p className="mt-3 text-xs text-muted-foreground">Concept illustration; final specifications and sourcing costs require confirmation. No automatic device readings.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/product" className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground">Get the kit — $11.99</Link>
               <Link to="/map" className="rounded-full border border-border px-6 py-3 text-sm">See results on the map</Link>

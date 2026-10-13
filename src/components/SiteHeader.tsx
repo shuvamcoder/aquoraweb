@@ -4,7 +4,7 @@ import { Droplets } from "lucide-react";
 const links = [
   { to: "/explore", label: "Explore waterways" },
   { to: "/map", label: "World map" },
-  { to: "/product", label: "The device" },
+  { to: "/product", label: "The Aquora Kit" },
 ] as const;
 
 export function SiteHeader() {
