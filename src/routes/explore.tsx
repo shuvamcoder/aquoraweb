@@ -3,6 +3,8 @@ import { z } from "zod";
 import { useMemo, useState } from "react";
 import { continentOf, continents, days, doStatus, waterways } from "@/lib/waterways";
 import { DoChart } from "@/components/DoChart";
+import { WaterProfile } from "@/components/WaterProfile";
+import { catalogObservation } from "@/lib/observations";
 import { LiveData } from "@/components/LiveData";
 
 export const Route = createFileRoute("/explore")({
@@ -12,7 +14,9 @@ export const Route = createFileRoute("/explore")({
       { title: "Explore Waterways — Aquora" },
       { name: "description", content: "Search lakes and rivers for dissolved oxygen, temperature, pH, advisories and 7-day trends." },
       { property: "og:title", content: "Explore Waterways — Aquora" },
-      { property: "og:description", content: "Current conditions, fishing outlook and recreation advisories for waterways near you." },
+      { property: "og:description", content: "Compare water fingerprints and explore sample trends alongside live agency data." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Explore,
@@ -25,8 +29,9 @@ function Explore() {
   const [q, setQ] = useState(initial ?? "");
   const [cont, setCont] = useState("All");
   const list = useMemo(() => waterways.filter((w) => (cont === "All" || continentOf(w) === cont) && (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q, cont]);
-  const [sel, setSel] = useState(list[0]?.id ?? waterways[0]!.id);
-  const w = waterways.find((x) => x.id === sel)!;
+  const [sel, setSel] = useState(list[0]?.id ?? waterways[0]?.id ?? "");
+  const w = waterways.find((x) => x.id === sel) ?? list[0];
+  if (!w) return <p className="p-8">No waterways available.</p>;
   const s = doStatus(w.do);
 
   return (
@@ -93,9 +98,10 @@ function Explore() {
             </div>
             <div className="rounded-2xl border border-border p-5">
               <h4 className="font-display text-xl">Recreation</h4>
-              <p className="mt-1 text-sm text-muted-foreground">Official advisory: {w.advisory ?? "None found"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Sample advisory: {w.advisory ?? "No advisory in sample; check local authorities"}</p>
             </div>
           </div>
+          <div className="mt-8 border-t border-border pt-6"><WaterProfile key={w.id} observation={catalogObservation(w)} onSelect={(o) => setSel(o.id)} /></div>
           <LiveData lat={w.lat} lon={w.lon} />
         </section>
       </div>
