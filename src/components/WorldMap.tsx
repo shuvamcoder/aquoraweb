@@ -59,7 +59,7 @@ export function WorldMap() {
       waterways.forEach((w) => {
         const c: [number, number] = [w.lat, w.lon];
         L.circleMarker(c, { radius: 9, color: "#0e6b80", fillColor: "#1aa3b8", fillOpacity: 0.9, weight: 2 })
-          .bindPopup(`<b>${w.name}</b><br/>${w.type} · ${w.region}<br/><small style="opacity:.7">AquaSense sample reading</small><br/>Oxygen: ${w.do} mg/L · ${w.temp}°C · pH ${w.ph} · ${w.turbidity} NTU<br/>${w.treated ? `<b style="color:#2f855a">Treated · oxygen ${improvement(w.history[0], w.history[w.history.length-1])! >= 0 ? "+" : ""}${improvement(w.history[0], w.history[w.history.length-1])}% this week</b><br/>` : `Trend: ${w.trend}<br/>`}<a href="/explore?q=${encodeURIComponent(w.name)}">See full conditions →</a>`)
+          .bindPopup(`<b>${w.name}</b><br/>${w.type} · ${w.region}<br/><small style="opacity:.7">Aquora sample reading</small><br/>Oxygen: ${w.do} mg/L · ${w.temp}°C · pH ${w.ph} · ${w.turbidity} NTU<br/>${w.treated ? `<b style="color:#2f855a">Treated · oxygen ${improvement(w.history[0], w.history[w.history.length-1])! >= 0 ? "+" : ""}${improvement(w.history[0], w.history[w.history.length-1])}% this week</b><br/>` : `Trend: ${w.trend}<br/>`}<a href="/explore?q=${encodeURIComponent(w.name)}">See full conditions →</a>`)
           .addTo(map);
       });
 
@@ -230,7 +230,7 @@ export function WorldMap() {
         <div className="rounded-3xl border border-border bg-card p-5 text-sm">
           <h4 className="font-medium">Legend</h4>
           <ul className="mt-2 space-y-1.5 text-muted-foreground">
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> AquaSense waterways with readings</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Aquora waterways with readings</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> USGS stations with live stats</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-accent ring-1 ring-primary/40" /> Waterways from OpenStreetMap</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-warn" /> Added by you</li>

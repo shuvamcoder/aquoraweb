@@ -7,9 +7,9 @@ import kit from "@/assets/kit.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AquaSense — Know your water before you go" },
-      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and track AquaSense treatment devices." },
-      { property: "og:title", content: "AquaSense — Know your water before you go" },
+      { title: "Aquora — Know your water before you go" },
+      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and track Aquora treatment devices." },
+      { property: "og:title", content: "Aquora — Know your water before you go" },
       { property: "og:description", content: "Water-health info for anglers, swimmers and pond owners, plus low-cost treatment you can track live." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -84,9 +84,9 @@ function Home() {
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="grid items-center gap-10 overflow-hidden rounded-[2rem] border border-border bg-card md:grid-cols-2">
-          <img src={kit} alt="AquaSense Kit" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
+          <img src={kit} alt="Aquora Kit" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
           <div className="p-8 sm:p-10">
-            <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The AquaSense Kit</span>
+            <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The Aquora Kit</span>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">Clearer water for less than a sandwich.</h2>
             <p className="mt-3 text-muted-foreground">An aeration pump and carbon filter for ponds and small waterways — with results shown on the world map.</p>
             <div className="mt-8 flex flex-wrap gap-3">

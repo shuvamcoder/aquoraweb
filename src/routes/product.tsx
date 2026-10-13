@@ -8,9 +8,9 @@ import kit from "@/assets/kit.jpg";
 export const Route = createFileRoute("/product")({
   head: () => ({
     meta: [
-      { title: "The AquaSense Kit — Clean water for $11.99" },
+      { title: "The Aquora Kit — Clean water for $11.99" },
       { name: "description", content: "An aeration pump and activated-carbon filter kit for ponds and small waterways — for less than the price of a sandwich." },
-      { property: "og:title", content: "The AquaSense Kit — $11.99" },
+      { property: "og:title", content: "The Aquora Kit — $11.99" },
       { property: "og:description", content: "Raise dissolved oxygen and filter impurities for less than an average sandwich." },
       { property: "og:type", content: "product" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -35,7 +35,7 @@ function Product() {
         <img src={lake} alt="Clear mountain lake at sunrise" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/85 via-foreground/55 to-foreground/10" />
         <div className="relative mx-auto max-w-6xl px-5 py-24 text-background sm:py-32">
-          <p className="text-sm uppercase tracking-[0.2em] opacity-80">The AquaSense Kit</p>
+          <p className="text-sm uppercase tracking-[0.2em] opacity-80">The Aquora Kit</p>
           <h1 className="mt-3 max-w-2xl font-display text-5xl leading-tight sm:text-7xl">Clearer water for less than a sandwich.</h1>
           <p className="mt-5 max-w-xl text-lg opacity-85">A pocket-sized aeration pump plus an activated-carbon filter. Oxygen in, impurities out — for just ${PRICE}.</p>
           <a href="#buy" className="mt-8 inline-block rounded-full bg-background px-7 py-3 font-medium text-foreground">Get the kit — ${PRICE}</a>
@@ -64,14 +64,14 @@ function Product() {
           <div>
             <Sandwich className="h-10 w-10" />
             <h2 className="mt-4 font-display text-5xl">Cheaper than lunch.</h2>
-            <p className="mt-3 max-w-md opacity-85">An average deli sandwich costs about ${SANDWICH.toFixed(2)}. The full AquaSense Kit costs less — and it keeps working long after lunch is gone.</p>
+            <p className="mt-3 max-w-md opacity-85">An average deli sandwich costs about ${SANDWICH.toFixed(2)}. The full Aquora Kit costs less — and it keeps working long after lunch is gone.</p>
           </div>
           <div className="space-y-4 rounded-3xl bg-background/95 p-7 text-foreground">
-            {[["Average sandwich", SANDWICH], ["AquaSense Kit", PRICE]].map(([label, p]) => (
+            {[["Average sandwich", SANDWICH], ["Aquora Kit", PRICE]].map(([label, p]) => (
               <div key={label as string}>
                 <div className="flex justify-between text-sm"><span>{label}</span><span className="font-medium">${(p as number).toFixed(2)}</span></div>
                 <div className="mt-1.5 h-3 rounded-full bg-secondary">
-                  <div className={`h-3 rounded-full ${label === "AquaSense Kit" ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ width: `${((p as number) / SANDWICH) * 100}%` }} />
+                  <div className={`h-3 rounded-full ${label === "Aquora Kit" ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ width: `${((p as number) / SANDWICH) * 100}%` }} />
                 </div>
               </div>
             ))}
@@ -83,11 +83,11 @@ function Product() {
       <section id="buy" className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid gap-8 rounded-3xl border border-border bg-card p-8 md:grid-cols-2 md:p-12">
           <div>
-            <img src={kit} alt="AquaSense Kit: mini aeration pump, tubing, bubble stone and carbon filter" width={1200} height={1008} loading="lazy" className="mb-6 aspect-[6/5] w-full rounded-2xl object-cover" />
-            <h2 className="font-display text-4xl">The AquaSense Kit</h2>
+            <img src={kit} alt="Aquora Kit: mini aeration pump, tubing, bubble stone and carbon filter" width={1200} height={1008} loading="lazy" className="mb-6 aspect-[6/5] w-full rounded-2xl object-cover" />
+            <h2 className="font-display text-4xl">The Aquora Kit</h2>
             <div className="mt-3 font-display text-6xl text-primary">${PRICE}</div>
             <ul className="mt-6 space-y-2 text-sm">
-              {["Aeration pump with adjustable flow", "Air tubing & bubble stone", "Activated-carbon filter cartridge", "Track improvement on the AquaSense world map"].map((i) => (
+              {["Aeration pump with adjustable flow", "Air tubing & bubble stone", "Activated-carbon filter cartridge", "Track improvement on the Aquora world map"].map((i) => (
                 <li key={i} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-primary" />{i}</li>
               ))}
             </ul>
