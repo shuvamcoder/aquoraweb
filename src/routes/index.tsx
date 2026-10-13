@@ -7,9 +7,9 @@ import kit from "@/assets/kit-battery.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aquora — Know your water before you go" },
+      { title: "Aquora — Water Intelligence for a Healthier World" },
       { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and record manual measurements with the battery-powered $11.99 Aquora kit." },
-      { property: "og:title", content: "Aquora — Know your water before you go" },
+      { property: "og:title", content: "Aquora — Water Intelligence for a Healthier World" },
       { property: "og:description", content: "Water-health info for anglers, swimmers and pond owners, plus affordable battery-powered water care and manual measuring tools." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,7 +39,7 @@ function Home() {
           <span className="inline-flex items-center gap-2 rounded-full border border-foreground/30 bg-foreground/10 px-3 py-1 text-xs uppercase tracking-[0.2em] backdrop-blur">
             <Radio className="h-3.5 w-3.5" /> Live water data
           </span>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[1.02] sm:text-7xl">What do you want to know about your water?</h1>
+          <h1 className="mt-6 max-w-4xl font-display text-5xl leading-[1.02] sm:text-7xl">Water Intelligence for a Healthier World.</h1>
           <p className="mt-5 max-w-xl text-lg opacity-85">There is no ‘fear’ when it’s clear. Real conditions for lakes and rivers, in plain language.</p>
           <form onSubmit={(e) => { e.preventDefault(); nav({ to: "/explore", search: { q } }); }} className="mt-10 flex max-w-xl items-center gap-2 rounded-full bg-card p-2 text-foreground shadow-2xl">
             <Search className="ml-3 h-5 w-5 shrink-0 text-muted-foreground" />
