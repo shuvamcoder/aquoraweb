@@ -4,9 +4,9 @@ import { WorldMap } from "@/components/WorldMap";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "World Waterway Map — AquaSense" },
+      { title: "World Waterway Map — Aquora" },
       { name: "description", content: "Discover lakes, rivers and ponds anywhere in the world, and pin waterways you know." },
-      { property: "og:title", content: "World Waterway Map — AquaSense" },
+      { property: "og:title", content: "World Waterway Map — Aquora" },
       { property: "og:description", content: "An interactive map of the world's waterways. Explore and add your own." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

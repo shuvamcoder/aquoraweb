@@ -9,9 +9,9 @@ export const Route = createFileRoute("/explore")({
   validateSearch: z.object({ q: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Explore Waterways — AquaSense" },
+      { title: "Explore Waterways — Aquora" },
       { name: "description", content: "Search lakes and rivers for dissolved oxygen, temperature, pH, advisories and 7-day trends." },
-      { property: "og:title", content: "Explore Waterways — AquaSense" },
+      { property: "og:title", content: "Explore Waterways — Aquora" },
       { property: "og:description", content: "Current conditions, fishing outlook and recreation advisories for waterways near you." },
     ],
   }),
@@ -32,7 +32,7 @@ function Explore() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="font-display text-5xl">Explore waterways</h1>
-      <p className="mt-2 max-w-2xl text-muted-foreground">{waterways.length} waterways across six continents. Summary readings are AquaSense samples — live USGS station data (US only) and weather load for each waterway below.</p>
+      <p className="mt-2 max-w-2xl text-muted-foreground">{waterways.length} waterways across six continents. Summary readings are Aquora samples — live USGS station data (US only) and weather load for each waterway below.</p>
       <div className="mt-6 flex flex-wrap gap-2">{continents.map((c) => <button key={c} onClick={() => setCont(c)} className={`rounded-full border px-4 py-1.5 text-sm transition ${cont === c ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:border-primary/60"}`}>{c}</button>)}</div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[320px_1fr]">
         <aside>
@@ -63,7 +63,7 @@ function Explore() {
               <p className="text-xs uppercase tracking-widest text-muted-foreground">{w.type} · {w.region}</p>
               <h2 className="font-display text-4xl">{w.name}</h2>
             </div>
-            {w.treated && <span className="rounded-full bg-primary px-3 py-1 text-xs text-primary-foreground">AquaSense treated</span>}
+            {w.treated && <span className="rounded-full bg-primary px-3 py-1 text-xs text-primary-foreground">Aquora treated</span>}
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">

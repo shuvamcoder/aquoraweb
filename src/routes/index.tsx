@@ -7,9 +7,9 @@ import kit from "@/assets/kit.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AquaSense — Know your water before you go" },
-      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and track AquaSense treatment devices." },
-      { property: "og:title", content: "AquaSense — Know your water before you go" },
+      { title: "Aquora — Know your water before you go" },
+      { name: "description", content: "Check oxygen, temperature and advisories for lakes and rivers with live USGS data, and track Aquora treatment devices." },
+      { property: "og:title", content: "Aquora — Know your water before you go" },
       { property: "og:description", content: "Water-health info for anglers, swimmers and pond owners, plus low-cost treatment you can track live." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -34,9 +34,9 @@ function Home() {
     <div>
       <section className="relative overflow-hidden">
         <img src={lake} alt="Calm lake at sunrise" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/45 to-background" />
-        <div className="relative mx-auto max-w-6xl px-5 pb-28 pt-20 text-background sm:pt-28">
-          <span className="inline-flex items-center gap-2 rounded-full border border-background/30 bg-background/10 px-3 py-1 text-xs uppercase tracking-[0.2em] backdrop-blur">
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/60 to-background" />
+        <div className="relative mx-auto max-w-6xl px-5 pb-28 pt-20 text-foreground sm:pt-28">
+          <span className="inline-flex items-center gap-2 rounded-full border border-foreground/30 bg-foreground/10 px-3 py-1 text-xs uppercase tracking-[0.2em] backdrop-blur">
             <Radio className="h-3.5 w-3.5" /> Live water data
           </span>
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[1.02] sm:text-7xl">What do you want to know about your water?</h1>
@@ -84,9 +84,9 @@ function Home() {
 
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="grid items-center gap-10 overflow-hidden rounded-[2rem] border border-border bg-card md:grid-cols-2">
-          <img src={kit} alt="AquaSense Kit" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
+          <img src={kit} alt="Aquora Kit" width={1200} height={1008} loading="lazy" className="h-full w-full object-cover" />
           <div className="p-8 sm:p-10">
-            <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The AquaSense Kit</span>
+            <span className="inline-flex items-center gap-2 text-sm text-primary"><ShieldCheck className="h-4 w-4" /> The Aquora Kit</span>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl">Clearer water for less than a sandwich.</h2>
             <p className="mt-3 text-muted-foreground">An aeration pump and carbon filter for ponds and small waterways — with results shown on the world map.</p>
             <div className="mt-8 flex flex-wrap gap-3">

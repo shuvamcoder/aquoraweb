@@ -12,7 +12,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
         <Link to="/" className="flex items-center gap-2 font-display text-2xl text-foreground">
-          <Droplets className="h-6 w-6 text-primary" /> AquaSense <span className="hidden text-xs font-normal italic text-muted-foreground lg:inline">There is no ‘fear’ when it’s clear.</span>
+          <Droplets className="h-6 w-6 text-primary" /> Aquora <span className="hidden text-xs font-normal italic text-muted-foreground lg:inline">There is no ‘fear’ when it’s clear.</span>
         </Link>
         <nav className="flex flex-wrap gap-1 text-sm">
           {links.map((l) => (
