@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type * as Leaflet from "leaflet";
+import { WaterProfile } from "@/components/WaterProfile";
+import { catalogObservation, type Observation } from "@/lib/observations";
 import { waterways } from "@/lib/waterways";
 import { getUsgsInBox, getUsgsName } from "@/lib/live-data.functions";
 
@@ -30,6 +32,7 @@ export function WorldMap() {
   const [form, setForm] = useState(emptyForm);
   const [status, setStatus] = useState("Zoom in to discover named lakes and rivers.");
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Observation | null>(null);
 
   useEffect(() => { addModeRef.current = addMode; }, [addMode]);
 
@@ -60,7 +63,7 @@ export function WorldMap() {
         const c: [number, number] = [w.lat, w.lon];
         L.circleMarker(c, { radius: 9, color: "#0e6b80", fillColor: "#1aa3b8", fillOpacity: 0.9, weight: 2 })
           .bindPopup(`<b>${w.name}</b><br/>${w.type} · ${w.region}<br/><small style="opacity:.7">Aquora sample reading</small><br/>Oxygen: ${w.do} mg/L · ${w.temp}°C · pH ${w.ph} · ${w.turbidity} NTU<br/>${w.treated ? `<b style="color:#2f855a">Treated · oxygen ${improvement(w.history[0], w.history[w.history.length-1])! >= 0 ? "+" : ""}${improvement(w.history[0], w.history[w.history.length-1])}% this week</b><br/>` : `Trend: ${w.trend}<br/>`}<a href="/explore?q=${encodeURIComponent(w.name)}">See full conditions →</a>`)
-          .addTo(map);
+          .addTo(map).on("click", () => setSelected(catalogObservation(w)));
       });
 
       const label = (t: Record<string, string> = {}) => {
@@ -75,7 +78,7 @@ export function WorldMap() {
 
       const fetchWater = () => {
         const z = map.getZoom();
-        if (z < 8) { osmLayer.current?.clearLayers(); setStatus("All of the world's waterways are shown in blue. Zoom in to click on individual lakes, rivers and streams."); return; }
+        if (z < 8) { osmLayer.current?.clearLayers(); setStatus("All of the world's water shapes are shown in blue. Zoom in to click on individual lakes, rivers and streams."); return; }
         const b = map.getBounds();
         const bbox = `${b.getSouth()},${b.getWest()},${b.getNorth()},${b.getEast()}`;
         const nameFilter = z < 11 ? `["name"]` : "";
@@ -95,7 +98,7 @@ export function WorldMap() {
               const name = (e.tags?.["name"] ?? "Unnamed").replace(/</g, "&lt;");
               L.circleMarker([lat, lon], { radius: 4, color: "#2b6cb0", fillColor: "#63b3ed", fillOpacity: 0.8, weight: 1 })
                 .bindPopup(`<b>${name}</b><br/>${label(e.tags)}<br/><small>From OpenStreetMap · no readings yet</small>`)
-                .addTo(osmLayer.current!);
+                .addTo(osmLayer.current ?? map).on("click", () => setSelected({ id: `osm-${e.type}-${e.id}`, name, source: "OpenStreetMap · location only", lat, lon }));
             });
             setStatus(`${n} waterways found in this view${z < 11 ? " (zoom in further to include unnamed ponds and streams)" : ""}.`);
           })
@@ -113,9 +116,12 @@ export function WorldMap() {
             const rows = pt.readings.map((x) => `${x.label}: <b>${x.value}${x.unit ? " " + x.unit : ""}</b>`).join("<br/>");
             const m = L.circleMarker([pt.lat, pt.lon], { radius: 5, color: "#276749", fillColor: "#48bb78", fillOpacity: 0.9, weight: 1 })
               .bindPopup(`<b>USGS ${pt.id}</b><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]!.time).toLocaleString()}</small>`)
-              .addTo(usgsLayer.current!);
+              .addTo(usgsLayer.current ?? map);
+            const read = (match: string) => { const r = pt.readings.find((x) => x.label.toLowerCase().includes(match)); if (!r) return undefined; const v = Number(r.value); return Number.isFinite(v) ? v : undefined; };
+            const observation: Observation = { id: `usgs-${pt.id}`, name: `USGS ${pt.id}`, source: "USGS · provisional", lat: pt.lat, lon: pt.lon, time: pt.readings[0]?.time, oxygen: read("oxygen"), temperature: read("temperature"), ph: read("ph") };
+            m.on("click", () => setSelected(observation));
             m.on("popupopen", () => {
-              getUsgsName({ data: { id: pt.id } }).then((n) => { if (n.name) m.setPopupContent(`<b>${esc(n.name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]!.time).toLocaleString()}</small>`); });
+              getUsgsName({ data: { id: pt.id } }).then((n) => { if (n.name) { setSelected((current) => current?.id === observation.id ? { ...current, name: n.name } : current); m.setPopupContent(`<b>${esc(n.name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]?.time ?? "").toLocaleString()}</small>`); } });
             });
           });
           setUsgsStatus(`${r.points.length} USGS monitoring stations with live stats in this view (USGS covers the US).`);
@@ -141,7 +147,10 @@ export function WorldMap() {
       const imp = improvement(Number(s.doBefore) || undefined, Number(s.do) || undefined);
       L.circleMarker([s.lat, s.lng], { radius: 8, color: "#b7791f", fillColor: "#f6ad55", fillOpacity: 0.95, weight: 2 })
         .bindPopup(`<b>${esc(s.name)}</b><br/>${s.type} · added by you${stats ? `<br/>${stats}` : "<br/><small>No readings added</small>"}${imp !== null ? `<br/><b style="color:${imp >= 0 ? "#2f855a" : "#c53030"}">Oxygen ${imp >= 0 ? "+" : ""}${imp}% since treatment</b>` : ""}${s.note ? `<br/>${esc(s.note)}` : ""}`)
-        .addTo(layer);
+        .addTo(layer).on("click", () => {
+          const numeric = (v?: string) => v?.trim() && Number.isFinite(Number(v)) ? Number(v) : undefined;
+          setSelected({ id: s.id, name: s.name, source: "Your manual reading", lat: s.lat, lon: s.lng, oxygen: numeric(s.do), temperature: numeric(s.temp), ph: numeric(s.ph), turbidity: numeric(s.turbidity), previousOxygen: numeric(s.doBefore) });
+        });
     });
   }, [spots, mapRef.current]);
 
@@ -180,7 +189,8 @@ export function WorldMap() {
         <p className="text-sm text-muted-foreground">{usgsStatus}</p>
       </div>
 
-      <aside className="space-y-4">
+      <aside className="min-w-0 space-y-6">
+        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2><WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} /></div>}
         <div className="rounded-3xl border border-border bg-card p-5">
           <h3 className="font-display text-2xl">Add a waterway</h3>
           {!addMode && !draft && (
@@ -230,7 +240,7 @@ export function WorldMap() {
         <div className="rounded-3xl border border-border bg-card p-5 text-sm">
           <h4 className="font-medium">Legend</h4>
           <ul className="mt-2 space-y-1.5 text-muted-foreground">
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Aquora waterways with readings</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Aquora sample waterways</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> USGS stations with live stats</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-accent ring-1 ring-primary/40" /> Waterways from OpenStreetMap</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-warn" /> Added by you</li>
