@@ -71,8 +71,8 @@ function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5">
-        <div className="grid gap-10 rounded-[2rem] bg-primary p-8 text-primary-foreground sm:p-12 md:grid-cols-3">
-          {[["Measure", "USGS stations and sensors track dissolved oxygen, pH, temperature and flow."], ["Understand", "Water fingerprints and comparisons put measurements in context."], ["Treat", "Aeration and activated carbon improve conditions in managed water."]].map(([t, d], i) => (
+        <div className="grid gap-10 rounded-[2rem] bg-primary p-8 text-primary-foreground sm:p-12 md:grid-cols-2 lg:grid-cols-4">
+          {[["Measure", "USGS stations and sensors track dissolved oxygen, pH, temperature and flow."], ["Understand", "Water fingerprints and comparisons put measurements in context."], ["Treat", "Aeration and activated carbon improve conditions in managed water."], ["Measure again", "Take a fresh reading and compare it with the first one to see what actually changed."]].map(([t, d], i) => (
             <div key={t} className="border-t border-primary-foreground/25 pt-5">
               <span className="text-sm opacity-70">0{i + 1}</span>
               <h3 className="font-display text-3xl">{t}</h3>
