@@ -8,3 +8,5 @@
 - [x] Verify product, explore and map interactions and existing tests.
 - [x] Make the home page process read Measure, Understand, Treat, Measure again.
 - [x] Simplify kit selection and descriptions; restore the homepage’s water-first focus and remove unwanted labels.
+
+- [x] Restore the original heading font, use Products labels, and simplify home and product wording.
