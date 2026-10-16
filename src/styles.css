@@ -162,4 +162,6 @@
 }
 
 .leaflet-container { font-family: var(--font-sans); z-index: 0; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--card); color: var(--foreground); }
+.leaflet-container a { color: var(--primary); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
