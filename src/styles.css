@@ -20,7 +20,7 @@
 
 @theme inline {
   --font-sans: "Work Sans", system-ui, sans-serif;
-  --font-display: "Instrument Serif", Georgia, serif;
+  --font-display: "Work Sans", system-ui, sans-serif;
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-warn-foreground: var(--warn-foreground);
@@ -154,9 +154,14 @@
 @layer base {
   body { font-family: var(--font-sans); }
 }
-.font-display { font-family: var(--font-display); font-weight: 400; }
+.font-display { font-family: var(--font-display); font-weight: 500; letter-spacing: 0; }
 .water-hero {
   background:
     radial-gradient(ellipse 80% 60% at 85% 10%, color-mix(in oklch, var(--accent) 70%, transparent), transparent 70%),
     linear-gradient(180deg, var(--background), var(--secondary));
 }
+
+.leaflet-container { font-family: var(--font-sans); z-index: 0; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--card); color: var(--foreground); }
+.leaflet-container a { color: var(--primary); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }

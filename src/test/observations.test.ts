@@ -13,12 +13,16 @@ describe("Observation profiles", () => {
   it("rejects non-finite readings", () => {
     expect(oxygenChange({ ...base, oxygen: NaN, previousOxygen: 5 })).toBeNull();
   });
-  it("keeps catalog profiles explicitly marked as samples", () => {
+  it("does not invent readings or history for catalog locations", () => {
     const first = waterways[0];
-    if (!first) throw new Error("Expected a sample waterway");
+    if (!first) throw new Error("Expected a location");
     const o = catalogObservation(first);
-    expect(o.sample).toBe(true);
+    expect(o.oxygen).toBeUndefined();
+    expect(o.temperature).toBeUndefined();
+    expect(o.ph).toBeUndefined();
+    expect(o.turbidity).toBeUndefined();
+    expect(o.previousOxygen).toBeUndefined();
     expect(o.time).toBeUndefined();
-    expect(o.previousLabel).toBe("Sample day 1");
+    expect(oxygenChange(o)).toBeNull();
   });
 });

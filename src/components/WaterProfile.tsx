@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Bookmark, Check, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { catalogObservation, metrics, oxygenChange, type Observation } from "@/lib/observations";
+import { metrics, oxygenChange, type Observation } from "@/lib/observations";
 import { useSavedPlaces } from "@/lib/saved-places";
-import { waterways } from "@/lib/waterways";
+
 
 export function WaterProfile({ observation, onSelect }: { observation: Observation; onSelect?: (o: Observation) => void }) {
   const [compareId, setCompareId] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const { places, toggle } = useSavedPlaces();
   const isSaved = places.some((p) => p.id === observation.id);
-  const candidates = [...places, ...waterways.map(catalogObservation)].filter((p, i, all) => p.id !== observation.id && all.findIndex((x) => x.id === p.id) === i);
+  const candidates = places.filter((p, i, all) => p.id !== observation.id && all.findIndex((x) => x.id === p.id) === i);
   const comparison = candidates.find((o) => o.id === compareId);
   const change = oxygenChange(observation);
   return <div className="min-w-0 space-y-6">

@@ -14,7 +14,7 @@ export const metrics = [
 ] as const;
 
 export function catalogObservation(w: Waterway): Observation {
-  return { id: w.id, name: w.name, source: "Aquora sample", sample: true, lat: w.lat, lon: w.lon, oxygen: w.do, temperature: w.temp, ph: w.ph, turbidity: w.turbidity, previousOxygen: w.history[0], previousLabel: "Sample day 1", currentLabel: "Sample day 7" };
+  return { id: w.id, name: w.name, source: "Waterway catalog · location only", lat: w.lat, lon: w.lon };
 }
 
 export function oxygenChange(o: Observation) {
