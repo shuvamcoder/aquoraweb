@@ -9,7 +9,9 @@ export function StationHistory({ id }: { id: string }) {
   const params = [{code:"00300",label:"Dissolved oxygen",unit:"mg/L"},{code:"00010",label:"Temperature",unit:"°C"},{code:"00400",label:"pH",unit:""},{code:"00060",label:"Streamflow",unit:"ft³/s"}];
   const param = params.find(p => p.code === code) ?? params[0];
   const q = useQuery({queryKey:["usgs-history",id,code,days],queryFn:async () => {
-    const query = new URLSearchParams({f:"json",limit:"10000",monitoring_location_id:id,parameter_code:code,datetime:`P${days}D`});
+    const end = new Date();
+    const start = new Date(end.getTime() - Number(days) * 86400000);
+    const query = new URLSearchParams({f:"json",limit:"10000",monitoring_location_id:id,parameter_code:code,datetime:`${start.toISOString()}/${end.toISOString()}`});
     const r = await fetch(`https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?${query}`, {signal: AbortSignal.timeout(20000)});
     if (!r.ok) throw new Error("History unavailable");
     const data = await r.json() as {features?: {properties:Record<string,unknown>}[]; links?: {rel:string}[]};
