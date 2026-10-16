@@ -6,9 +6,9 @@ import { products, budgetDisclaimer } from "@/lib/products";
 
 export const Route = createFileRoute("/product")({
   head: () => ({ meta: [
-    { title: "Water-Care Kits — AquaTrack, AquaPure & AquaSync | Aquora" },
-    { name: "description", content: "Meet AquaTrack for measuring water, AquaPure for aeration and carbon filtration, and AquaSync for both. Compare Aquora’s water-care kits simply." },
-    { property: "og:title", content: "Aquora Water-Care Kits" },
+    { title: "Products — AquaTrack, AquaPure & AquaSync | Aquora" },
+    { name: "description", content: "Meet AquaTrack for measuring water, AquaPure for aeration and carbon filtration, and AquaSync for both. Compare Aquora’s products simply." },
+    { property: "og:title", content: "Aquora Products" },
     { property: "og:description", content: "Measure with AquaTrack. Treat with AquaPure. Bring both together with AquaSync." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }), component: Kits,
@@ -25,12 +25,12 @@ function Kits() {
     return () => window.removeEventListener("hashchange", syncHash);
   }, []);
   const kit = products.find(p => p.id === selected) ?? products[0];
-  return <main>
+  return <div>
     <section className="mx-auto max-w-6xl px-5 pb-8 pt-12">
-      <p className="text-xs uppercase tracking-widest text-primary">Aquora / Water-care kits</p>
+      <p className="text-xs uppercase tracking-widest text-primary">Aquora / Products</p>
       <h1 className="mt-4 font-display text-4xl sm:text-5xl">Measure. Treat. Or both.</h1>
       <p className="mt-4 max-w-2xl text-lg text-muted-foreground">Simple tools for understanding and caring for water.</p>
-      <nav aria-label="Choose a water-care kit" className="mt-8 grid gap-3 sm:grid-cols-3">
+      <nav aria-label="Choose a product" className="mt-8 grid gap-3 sm:grid-cols-3">
         {products.map(p => <Button key={p.id} asChild variant={p.id === selected ? "default" : "outline"} className="h-auto justify-between whitespace-normal px-5 py-4">
           <a href={`#${p.id}`} onClick={() => setSelected(p.id)} aria-current={p.id === selected ? "true" : undefined}><span className="text-left"><span className="block text-lg">{p.name}</span><span className="block text-sm font-normal">{p.role}</span></span><ArrowRight className="shrink-0" /></a>
         </Button>)}
@@ -47,16 +47,16 @@ function Kits() {
           <h2 className="mt-3 font-display text-4xl">{kit.name}</h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">{kit.description}</p>
           <ul className="mt-6 space-y-3">{kit.features.map(f => <li key={f} className="flex gap-3 text-sm"><Check className="h-4 w-4 shrink-0 text-primary" />{f}</li>)}</ul>
-          <div className="mt-6 border-t border-border pt-5"><p className="text-sm font-medium">Component budget: ~${kit.budget}{kit.plus ? "+" : ""}</p><p className="mt-1 text-xs text-muted-foreground">{kit.budgetLabel} · not a complete-kit or sale price</p></div>
+          <div className="mt-6 border-t border-border pt-5"><p className="text-sm font-medium">Component budget: ~${kit.budget}{kit.plus ? "+" : ""}</p><p className="mt-1 text-xs text-muted-foreground">{kit.budgetLabel} · estimate, not a sale price</p></div>
           <details className="mt-5 border-t border-border py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium">What’s inside <ChevronDown className="h-4 w-4" /></summary><ul className="mt-4 space-y-2 text-sm text-muted-foreground">{kit.components.map(c => <li key={c}>{c}</li>)}</ul></details>
           <p className="text-xs leading-relaxed text-muted-foreground">{kit.limitation}</p>
         </div>
       </div>
     </section>
     <section className="mx-auto max-w-6xl px-5 py-8">
-      <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">In development · not available to buy yet. Accuracy and treatment performance still need testing. These kits do not establish drinking-water safety.</p>
+      <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">In development · not available to buy yet. Accuracy and treatment performance still need testing. These systems do not establish drinking-water safety.</p>
       <details className="mt-4 max-w-3xl"><summary className="cursor-pointer text-sm text-muted-foreground">About the budget estimates</summary><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{budgetDisclaimer} A smartphone is not included in these estimates.</p></details>
       <Button asChild variant="link" className="mt-6 px-0"><Link to="/map">Explore water conditions <ArrowRight /></Link></Button>
     </section>
-  </main>;
+  </div>;
 }
