@@ -1,7 +1,7 @@
 # Current work
-- [ ] Rename navigation and homepage wording; remove product role subtitles.
-- [ ] Show catalog prices and align all three products and images with enclosed battery power.
-- [ ] Resolve product page loading error and verify navigation, prices and selection.
+- [x] Rename navigation and homepage wording; remove product role subtitles.
+- [x] Show catalog prices and align all three products and images with enclosed battery power.
+- [x] Resolve product page loading error and verify navigation, prices and selection.
 - [x] Refresh home and product pages for three proposed products and transparent budgets.
 - [x] Create consistent labeled product concept imagery and beginner-friendly measurement education.
 - [x] Remove invented public conditions; improve real station provenance, filters and history where available.
