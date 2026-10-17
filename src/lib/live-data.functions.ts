@@ -6,6 +6,7 @@ const PARAMS: Record<string, { label: string; unit: string }> = {
   "00300": { label: "Dissolved O₂", unit: "mg/L" },
   "00010": { label: "Water temp", unit: "°C" },
   "00400": { label: "pH", unit: "" },
+  "00095": { label: "Conductance", unit: "µS/cm" },
   "00060": { label: "Streamflow", unit: "ft³/s" },
 };
 
@@ -61,18 +62,35 @@ export const getUsgsNearby = createServerFn({ method: "GET" })
 export const getWeather = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ lat: z.number(), lon: z.number() }).parse(d))
   .handler(async ({ data }) => {
+    const key = process.env['OPENWEATHERMAP_API_KEY'];
     try {
       const res = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current=temperature_2m,wind_speed_10m,precipitation,cloud_cover`,
+        `https://api.openweathermap.org/data/2.5/weather?lat=${data.lat}&lon=${data.lon}&units=metric${key ? `&appid=${key}` : ""}`,
       );
       if (!res.ok) throw new Error(`Weather service responded ${res.status}`);
-      const j = (await res.json()) as { current: { temperature_2m: number; wind_speed_10m: number; precipitation: number; cloud_cover: number } };
+      const j = (await res.json()) as {
+        main?: { temp?: number };
+        wind?: { speed?: number };
+        rain?: { "1h"?: number };
+        clouds?: { all?: number };
+        weather?: { description?: string }[];
+      };
       let seaTemp: number | null = null;
       try {
         const m = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${data.lat}&longitude=${data.lon}&current=sea_surface_temperature`);
         if (m.ok) { const mj = (await m.json()) as { current?: { sea_surface_temperature?: number | null } }; seaTemp = mj.current?.sea_surface_temperature ?? null; }
       } catch { /* inland waters have no marine data */ }
-      return { weather: { ...j.current, sea_surface_temperature: seaTemp }, error: null };
+      return {
+        weather: {
+          temperature_2m: j.main?.temp ?? null,
+          wind_speed_10m: j.wind?.speed != null ? Math.round(j.wind.speed * 3.6 * 10) / 10 : null,
+          precipitation: j.rain?.["1h"] ?? 0,
+          cloud_cover: j.clouds?.all ?? null,
+          description: j.weather?.[0]?.description ?? null,
+          sea_surface_temperature: seaTemp,
+        },
+        error: null,
+      };
     } catch (e) {
       return { weather: null, error: e instanceof Error ? e.message : "Weather unavailable" };
     }
