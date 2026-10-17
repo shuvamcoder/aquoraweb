@@ -119,7 +119,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
       let requestId = 0;
       const fetchUsgs = () => {
         const currentRequest = ++requestId;
-        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in to load USGS stations. USGS measurements cover the U.S., not every global waterway."); return; }
+        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in to load USGS stations. USGS covers the United States; global waterways are a future addition."); return; }
         const b = map.getBounds();
         setUsgsStatus("Loading USGS stations…");
         getUsgsInBox({ data: { w: Math.max(-180, b.getWest()), s: Math.max(-90, b.getSouth()), e: Math.min(180, b.getEast()), n: Math.min(90, b.getNorth()) } }).then((r) => {

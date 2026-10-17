@@ -5,9 +5,9 @@ export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
       { title: "Atlas — Aquora" },
-      { name: "description", content: "Discover lakes, rivers and ponds anywhere in the world, and pin waterways you know." },
-      { property: "og:title", content: "Atlas — Aquora" },
-      { property: "og:description", content: "An interactive map of the world's waterways. Explore and add your own." },
+      { name: "description", content: "Discover U.S. lakes, rivers and ponds with USGS station readings, and pin waterways you know." },
+...
+      { property: "og:description", content: "An interactive map of U.S. waterways. Explore and add your own." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
