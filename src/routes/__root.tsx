@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "../components/SiteHeader";
+import { Button } from "../components/ui/button";
 
 function NotFoundComponent() {
   return (
@@ -53,21 +54,19 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
+              if (/dynamically imported module|Loading chunk|Importing a module script failed/i.test(error.message)) {
+                window.location.reload();
+                return;
+              }
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
+          </Button>
+          <Button asChild variant="outline"><a href="/">Go home</a></Button>
         </div>
       </div>
     </div>
@@ -118,6 +117,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    // A deployment can remove a lazy-loaded asset that an older open tab still references.
+    const recoverPreload = (event: Event) => {
+      try {
+        const key = "aquora-chunk-recovery";
+        const previous = Number(sessionStorage.getItem(key) ?? 0);
+        if (Date.now() - previous < 60000) return;
+        sessionStorage.setItem(key, String(Date.now()));
+        event.preventDefault();
+        window.location.reload();
+      } catch {
+        // Keep the normal retry screen when browser storage is unavailable.
+      }
+    };
+    window.addEventListener("vite:preloadError", recoverPreload);
+    return () => window.removeEventListener("vite:preloadError", recoverPreload);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

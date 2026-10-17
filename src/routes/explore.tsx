@@ -5,7 +5,7 @@ import { continentOf, continents, waterways } from "@/lib/waterways";
 import { LiveData } from "@/components/LiveData";
 import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/explore")({ validateSearch: z.object({ q: z.string().optional() }), head: () => ({meta: [
- {title: "Explore Public Water Data — Aquora"}, {name: "description", content: "Find waterways and explore actual nearby USGS station readings, units and timestamps. No invented conditions or trends."}, {property: "og:title", content: "Explore Public Water Data — Aquora"}, {property: "og:description", content: "Real USGS observations and global waterway locations, with transparent data availability."}, {property: "og:type", content: "website"}, {name: "twitter:card", content: "summary_large_image"},
+ {title: "Discover — Aquora"}, {name: "description", content: "Find waterways and explore actual nearby USGS station readings, units and timestamps. No invented conditions or trends."}, {property: "og:title", content: "Discover — Aquora"}, {property: "og:description", content: "Real USGS observations and global waterway locations, with transparent data availability."}, {property: "og:type", content: "website"}, {name: "twitter:card", content: "summary_large_image"},
 ]}), component: Explore });
 function Explore() {
  const {q:initial} = Route.useSearch(); const [q,setQ] = useState(initial ?? ""); const [cont,setCont] = useState("All"); const [sel,setSel] = useState("");
