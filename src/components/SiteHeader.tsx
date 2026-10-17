@@ -27,5 +27,36 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
- return <footer className="mt-16 border-t border-border"><div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-2"><div><p className="font-display text-3xl">Aquora</p><p className="mt-2 text-sm text-muted-foreground">Water Intelligence for a Healthier World.</p><p className="mt-4 text-sm text-muted-foreground">Helping people understand and care for the water around them.</p></div><div className="space-y-3 text-xs leading-relaxed text-muted-foreground"><p>Data: <a href="https://waterdata.usgs.gov/" target="_blank" rel="noreferrer" className="text-primary underline">USGS Water Data</a> (U.S., provisional readings), <a href="https://www.openstreetmap.org/copyright" className="text-primary underline">OpenStreetMap</a>, Esri hydro overlay and <a href="https://open-meteo.com/" className="text-primary underline">Open-Meteo</a>.</p><p>Hardware images and phone readings are illustrative concepts, not verified devices or performance results. Budget targets are not complete-system prices.</p><p>No single measurement or treatment establishes drinking or swimming safety. Follow local guidance and appropriate testing.</p><p>Measure → Understand → Treat → Measure again</p></div></div></footer>;
+  return (
+    <footer className="mt-16 border-t border-border bg-card/40">
+      <div className="mx-auto max-w-6xl px-5 py-12">
+        <div className="grid gap-10 sm:grid-cols-3">
+          <div>
+            <p className="flex items-center gap-2 font-display text-2xl"><Droplets className="h-5 w-5 text-primary" /> Aquora</p>
+            <p className="mt-3 text-sm text-muted-foreground">Water Intelligence for a Healthier World.</p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-primary">Products</p>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>AquaTrack — water checker</li>
+              <li>AquaPure — water treatment</li>
+              <li>AquaSync — both in one</li>
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-primary">Data sources</p>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>USGS Water Data — U.S. stations, provisional</li>
+              <li>OpenWeather — atmosphere</li>
+              <li>OpenStreetMap & Esri — waterway geography</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-10 border-t border-border pt-6 text-xs leading-relaxed text-muted-foreground">
+          <p>Hardware images and phone readings are illustrative concepts, not verified devices or performance results. No single measurement or treatment establishes drinking or swimming safety — follow local guidance and appropriate testing.</p>
+          <p className="mt-3">© {new Date().getFullYear()} Aquora. Measure → Understand → Treat → Measure again.</p>
+        </div>
+      </div>
+    </footer>
+  );
 }

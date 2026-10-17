@@ -3,7 +3,7 @@ import type { Waterway } from "@/lib/waterways";
 export type Observation = {
   id: string; name: string; source: string; sample?: boolean;
   lat: number; lon: number; time?: string | undefined;
-  oxygen?: number | undefined; temperature?: number | undefined; ph?: number | undefined; turbidity?: number | undefined;
+  oxygen?: number | undefined; temperature?: number | undefined; ph?: number | undefined; turbidity?: number | undefined; conductance?: number | undefined;
   previousOxygen?: number | undefined; previousLabel?: string; currentLabel?: string;
 };
 export const metrics = [
@@ -11,6 +11,7 @@ export const metrics = [
   { key: "temperature", label: "Water temperature", unit: "°C", max: 40, explanation: "Water temperature affects aquatic life and how much oxygen water can hold. Suitable temperatures depend on the species and location." },
   { key: "ph", label: "pH", unit: "", max: 14, explanation: "pH describes acidity on a scale of 0–14. A value of 7 is neutral. This reading alone cannot confirm water safety." },
   { key: "turbidity", label: "Turbidity", unit: "NTU", max: 100, explanation: "Turbidity measures cloudiness from suspended particles. Clear water can still contain harmful contaminants." },
+  { key: "conductance", label: "Specific conductance", unit: "µS/cm", max: 2000, explanation: "Conductance reflects the concentration of dissolved ions. Low values are typical in unpolluted water; high values can signal pollution from runoff, sewage or industrial sources." },
 ] as const;
 
 export function catalogObservation(w: Waterway): Observation {
