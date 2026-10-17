@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as NexusRouteImport } from './routes/nexus'
 import { Route as ProductRouteImport } from './routes/product'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NexusRoute = NexusRouteImport.update({
+  id: '/nexus',
+  path: '/nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductRoute = ProductRouteImport.update({
   id: '/product',
   path: '/product',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
+  '/nexus': typeof NexusRoute
   '/product': typeof ProductRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
+  '/nexus': typeof NexusRoute
   '/product': typeof ProductRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/explore': typeof ExploreRoute
   '/map': typeof MapRoute
+  '/nexus': typeof NexusRoute
   '/product': typeof ProductRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/explore' | '/map' | '/product'
+  fullPaths: '/' | '/explore' | '/map' | '/nexus' | '/product'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/map' | '/product'
-  id: '__root__' | '/' | '/explore' | '/map' | '/product'
+  to: '/' | '/explore' | '/map' | '/nexus' | '/product'
+  id: '__root__' | '/' | '/explore' | '/map' | '/nexus' | '/product'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExploreRoute: typeof ExploreRoute
   MapRoute: typeof MapRoute
+  NexusRoute: typeof NexusRoute
   ProductRoute: typeof ProductRoute
 }
 
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nexus': {
+      id: '/nexus'
+      path: '/nexus'
+      fullPath: '/nexus'
+      preLoaderRoute: typeof NexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product': {
       id: '/product'
       path: '/product'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExploreRoute: ExploreRoute,
   MapRoute: MapRoute,
+  NexusRoute: NexusRoute,
   ProductRoute: ProductRoute,
 }
 export const routeTree = rootRouteImport

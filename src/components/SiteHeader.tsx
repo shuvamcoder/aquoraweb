@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Droplets } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const links = [
   { to: "/explore", label: "Discover" },
   { to: "/map", label: "Atlas" },
   { to: "/product", label: "Collection" },
+  { to: "/nexus", label: "Nexus" },
 ] as const;
 
 export function SiteHeader() {
@@ -36,12 +38,11 @@ export function SiteFooter() {
             <p className="mt-3 text-sm text-muted-foreground">Water Intelligence for a Healthier World.</p>
           </div>
           <div>
-             <p className="text-xs uppercase tracking-widest text-primary">Collection</p>
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>AquaTrack</li>
-              <li>AquaPure</li>
-              <li>AquaSync</li>
-            </ul>
+            <p className="text-xs uppercase tracking-widest text-primary">Explore Aquora</p>
+            <nav aria-label="Footer navigation" className="mt-3 flex flex-col items-start gap-1">
+              <Button asChild variant="ghost" className="h-8 px-0 text-muted-foreground"><Link to="/">Home</Link></Button>
+              {links.map(l => <Button key={l.to} asChild variant="ghost" className="h-8 px-0 text-muted-foreground"><Link to={l.to}>{l.label}</Link></Button>)}
+            </nav>
           </div>
           <div>
             <p className="text-xs uppercase tracking-widest text-primary">Data sources</p>

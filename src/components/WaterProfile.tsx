@@ -5,6 +5,9 @@ import { metrics, oxygenChange, type Observation } from "@/lib/observations";
 import { useSavedPlaces } from "@/lib/saved-places";
 
 
+import { MeasurementTag } from "@/components/MeasurementTag";
+import { measurementStatus, hasMeasurements } from "@/lib/measurement-status";
+
 export function WaterProfile({ observation, onSelect }: { observation: Observation; onSelect?: (o: Observation) => void }) {
   const [compareId, setCompareId] = useState("");
   const [showDetails, setShowDetails] = useState(false);
@@ -19,10 +22,12 @@ export function WaterProfile({ observation, onSelect }: { observation: Observati
       <Button size="icon" variant={isSaved ? "secondary" : "outline"} aria-label={isSaved ? "Unsave place" : "Save place"} title={isSaved ? "Unsave place" : "Save place"} onClick={() => toggle(observation)}>{isSaved ? <Check /> : <Bookmark />}</Button>
     </div>
     {observation.sample && <p className="text-xs text-warn-foreground">Illustrative sample measurements — not observed water conditions.</p>}
+    {!hasMeasurements(observation) && <p className="text-sm text-muted-foreground">This is a location reference, not a monitoring station. Nearby USGS readings appear separately when available.</p>}
     <div className="space-y-3">{metrics.map((m) => {
       const value = observation[m.key];
-      return <details key={m.key} className="border-b border-border pb-3"><summary className="cursor-pointer text-sm"><span className="inline-flex w-[90%] flex-wrap justify-between gap-2"><span>{m.label}</span><b>{value == null ? "Not measured" : `${value} ${m.unit}`}</b></span></summary><meter aria-label={`${m.label} profile`} min={0} max={m.max} value={Math.max(0, value ?? 0)} className="mt-2 h-2 w-full accent-primary" /><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{m.explanation}</p></details>;
+      return <details key={m.key} className="border-b border-border pb-3"><summary className="cursor-pointer text-sm"><span className="inline-flex w-[90%] flex-wrap justify-between gap-2"><span>{m.label}</span><b>{value == null ? "Not reported" : `${value} ${m.unit}`}</b><MeasurementTag metric={m.key} value={value} /></span></summary><meter aria-label={`${m.label} profile`} min={0} max={m.max} value={Math.max(0, value ?? 0)} className="mt-2 h-2 w-full accent-primary" /><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{m.explanation} {measurementStatus(m.key, value).reason}</p>{observation.metricTimes?.[m.key] && <p className="mt-2 text-xs text-muted-foreground">Recorded {new Date(observation.metricTimes[m.key] ?? "").toLocaleString()}</p>}</details>;
     })}</div>
+    <p className="text-xs leading-relaxed text-muted-foreground">Green: above the low-oxygen screen or within the freshwater pH range. Amber/red: screening concern. Gray: missing data or local context needed. EPA aquatic-life guidance; not a drinking or swimming safety verdict.</p>
     <section className="border-t border-border pt-4"><h4 className="font-medium">What changed?</h4>{change == null ? <p className="mt-2 text-sm text-muted-foreground">No comparable earlier oxygen measurement is available.</p> : <><p className="mt-2 text-sm">{observation.sample ? "In this sample, dissolved" : "Dissolved"} oxygen {change === 0 ? "was unchanged" : `${change > 0 ? "increased" : "decreased"} by ${Math.abs(change)} mg/L`}.</p><p className="mt-1 text-xs text-muted-foreground">{observation.previousLabel ?? "Earlier reading (date not supplied)"}: {observation.previousOxygen} mg/L → {observation.currentLabel ?? "Current reading (date not supplied)"}: {observation.oxygen} mg/L</p><p className="mt-1 text-xs text-muted-foreground">A change alone does not establish treatment effectiveness.</p></>}</section>
     <section className="border-t border-border pt-4"><h4 className="flex items-center gap-2 font-medium"><GitCompareArrows className="h-4 w-4 text-primary" />Compare waters</h4>
       <select aria-label="Compare with another waterway" value={compareId} onChange={(e) => setCompareId(e.target.value)} className="mt-3 w-full min-w-0 rounded-md border border-input bg-background p-2 text-sm"><option value="">Choose another waterway</option>{candidates.map((p) => <option key={p.id} value={p.id}>{p.name}{p.sample ? " (sample)" : ""}</option>)}</select>

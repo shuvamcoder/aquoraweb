@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { LiveData } from "@/components/LiveData";
+import { usgsObservation, usgsParameters } from "@/lib/usgs";
+import { measurementStatus, hasMeasurements } from "@/lib/measurement-status";
 import { StationHistory } from "@/components/StationHistory";
 import type * as Leaflet from "leaflet";
 import { WaterProfile } from "@/components/WaterProfile";
@@ -55,7 +58,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
       const primary = tokens.getPropertyValue("--primary").trim();
       const good = tokens.getPropertyValue("--good").trim();
       const accent = tokens.getPropertyValue("--accent").trim();
-      const map = L.map(el.current, { worldCopyJump: true, preferCanvas: true }).setView(preview ? [39, -98] : [25, 0], preview ? 5 : 2);
+      const map = L.map(el.current, { worldCopyJump: true, preferCanvas: true }).setView([39, -98], 5);
       mapRef.current = map;
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors", maxZoom: 18,
@@ -70,7 +73,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
 
       waterways.forEach((w) => {
         L.circleMarker([w.lat, w.lon], {radius:6,color:primary,fillColor:primary,fillOpacity:0.8,weight:1})
-          .bindPopup(`<b>${esc(w.name)}</b><br/>${w.type} · ${esc(w.region)}<br/><small>Catalog location only · no assumed readings</small><br/><a href="/explore?q=${encodeURIComponent(w.name)}">Explore nearby public data →</a>`)
+          .bindPopup(`<b>${esc(w.name)}</b><br/>${w.type} · ${esc(w.region)}<br/><small>Catalog location only · no assumed readings</small><br/><small>Select for nearby USGS observations</small>`)
           .addTo(map).on("click", () => setSelected(catalogObservation(w)));
       });
 
@@ -113,27 +116,33 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
           .catch((err) => { if (err.name !== "AbortError") setStatus("Waterway lookup is busy — move the map to try again."); });
       };
       let usgsTimer: ReturnType<typeof setTimeout>;
+      let requestId = 0;
       const fetchUsgs = () => {
-        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in (to country/state level) to load every USGS monitoring station with live stats."); return; }
+        const currentRequest = ++requestId;
+        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in to load USGS stations. USGS measurements cover the U.S., not every global waterway."); return; }
         const b = map.getBounds();
         setUsgsStatus("Loading USGS stations…");
         getUsgsInBox({ data: { w: Math.max(-180, b.getWest()), s: Math.max(-90, b.getSouth()), e: Math.min(180, b.getEast()), n: Math.min(90, b.getNorth()) } }).then((r) => {
+          if (cancelled || currentRequest !== requestId) return;
           usgsLayer.current?.clearLayers();
           if (r.error) { setUsgsStatus("USGS data is unavailable right now."); return; }
-          r.points.filter(pt => measurementRef.current === "all" || pt.readings.some(x => x.label.toLowerCase().includes(measurementRef.current))).forEach((pt) => {
-            const rows = pt.readings.map((x) => `${x.label}: <b>${x.value}${x.unit ? " " + x.unit : ""}</b>`).join("<br/>");
+          r.points.filter(pt => measurementRef.current === "all" || pt.readings.some(x => usgsParameters[x.code]?.key === measurementRef.current)).forEach((pt) => {
+            const rows = pt.readings.map(x => {
+              const tag = measurementStatus(usgsParameters[x.code]?.key ?? "temperature", x.value);
+              const color = tag.tone === "muted" ? "muted-foreground" : tag.tone === "warn" ? "warn-foreground" : tag.tone;
+              return `${x.label}: <b>${x.value} ${x.unit}</b> <span style="color:var(--${color})">● ${tag.label}</span><br/><small>${new Date(x.time).toLocaleString()} · ${esc(x.approval)}</small>`;
+            }).join("<br/>");
             const m = L.circleMarker([pt.lat, pt.lon], { radius: 5, color: good, fillColor: good, fillOpacity: 0.9, weight: 1 })
               .bindPopup(`<b>USGS ${pt.id}</b><br/>${rows}<br/><small>Latest reading ${pt.readings[0]?.time ? new Date(pt.readings[0].time).toLocaleString() : "Date unavailable"}</small>`)
               .addTo(usgsLayer.current ?? map);
-            const read = (match: string) => { const r = pt.readings.find((x) => x.label.toLowerCase().includes(match)); if (!r) return undefined; const v = Number(r.value); return Number.isFinite(v) ? v : undefined; };
-            const observation: Observation = { id: `usgs-${pt.id}`, name: `USGS ${pt.id}`, source: "USGS · provisional", lat: pt.lat, lon: pt.lon, time: pt.readings[0]?.time, oxygen: read("o₂"), temperature: read("temp"), ph: read("ph") };
+            const observation = usgsObservation(pt);
             m.on("click", () => setSelected(observation));
             m.on("popupopen", () => {
               getUsgsName({ data: { id: pt.id } }).then((n) => { const name = n.name; if (name) { setSelected((current) => current?.id === observation.id ? { ...current, name } : current); m.setPopupContent(`<b>${esc(name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]?.time ?? "").toLocaleString()}</small>`); } });
             });
           });
-          setUsgsStatus(`${r.points.length} USGS stations returned for this view (U.S. coverage; source response limits may apply).`);
-        });
+          setUsgsStatus(`${r.points.length} USGS stations with recorded values in this view. U.S. coverage; check reading dates.${r.partial ? " Partial response — zoom in for more complete coverage." : ""}`);
+        }).catch(() => { if (!cancelled && currentRequest === requestId) setUsgsStatus("USGS data could not be loaded. Move the map to retry."); });
       };
       fetchWater();
       fetchUsgs();
@@ -191,7 +200,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
           <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Find a map location" placeholder="Find a place — e.g. Lake Geneva" className="min-w-0 flex-1 rounded-full border border-input bg-card px-5 py-2.5 outline-none focus:border-primary" />
           <Button type="submit">Go</Button>
         </form>
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-sm"><label htmlFor={preview ? "preview-measurement" : "map-measurement"}>USGS measurement</label><select id={preview ? "preview-measurement" : "map-measurement"} value={measurement} onChange={e => setMeasurement(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2"><option value="all">All available</option><option value="o₂">Dissolved oxygen</option><option value="temp">Temperature</option><option value="ph">pH</option><option value="streamflow">Streamflow</option></select></div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-sm"><label htmlFor={preview ? "preview-measurement" : "map-measurement"}>USGS measurement</label><select id={preview ? "preview-measurement" : "map-measurement"} value={measurement} onChange={e => setMeasurement(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2"><option value="all">All available</option><option value="oxygen">Dissolved oxygen</option><option value="temperature">Temperature</option><option value="ph">pH</option><option value="conductance">Specific conductance</option><option value="streamflow">Streamflow</option></select></div>
         <div className={`relative overflow-hidden rounded-lg border border-border ${addMode ? "cursor-crosshair ring-2 ring-primary" : ""}`}>
           <div ref={el} aria-label="Interactive waterway map" className={preview ? "h-[380px] w-full" : "h-[480px] w-full sm:h-[620px]"} />
         </div>
@@ -200,7 +209,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
       </div>
 
       {!preview && <aside className="min-w-0 space-y-6">
-        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2><WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}</div>}
+        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2>{hasMeasurements(selected) && <WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />}{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
         <div className="rounded-lg border border-border bg-card p-5">
           <h3 className="font-display text-2xl">Add a waterway</h3>
           {!addMode && !draft && (
@@ -241,7 +250,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
           <h4 className="font-medium">Legend</h4>
           <ul className="mt-2 space-y-1.5 text-muted-foreground">
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Catalog locations · no readings</li>
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> USGS stations with live stats</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> USGS stations · recorded values</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-accent ring-1 ring-primary/40" /> Waterways from OpenStreetMap</li>
             <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-warn" /> Added by you</li>
           </ul>
@@ -260,7 +269,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
             </ul>
           </div>
         )}
-      </aside>}{preview && selected && <div><WaterProfile key={selected.id} observation={selected} />{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}</div>}
+      </aside>}{preview && selected && <div><WaterProfile key={selected.id} observation={selected} />{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
     </div>
   );
 }

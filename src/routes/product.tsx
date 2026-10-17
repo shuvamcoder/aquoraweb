@@ -42,8 +42,8 @@ function Kits() {
           {kit.id !== "aquapure" && <figcaption className="mt-3 text-xs leading-relaxed text-muted-foreground">Phone readings shown are illustrative.</figcaption>}
         </figure>
         <div>
-          <div className="flex items-center justify-between gap-4"><h2 className="font-display text-4xl">{kit.name}</h2><p className="text-2xl text-primary">${kit.price}</p></div>
-          <ul className="mt-6 space-y-3">{kit.features.map(f => <li key={f} className="flex gap-3 text-sm"><Check className="h-4 w-4 shrink-0 text-primary" />{f}</li>)}</ul>
+          <div className="flex items-center justify-between gap-4"><h2 className="font-display text-4xl">{kit.name}</h2><p className="text-2xl text-primary">${kit.price.toFixed(2)}</p></div>
+          <p className="mt-3 text-muted-foreground">{kit.description}</p><ul className="mt-6 space-y-3">{kit.features.map(f => <li key={f} className="flex gap-3 text-sm"><Check className="h-4 w-4 shrink-0 text-primary" />{f}</li>)}</ul>
           <details className="mt-6 border-t border-border py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium">What's inside <ChevronDown className="h-4 w-4" /></summary><ul className="mt-4 space-y-2 text-sm text-muted-foreground">{kit.components.map(c => <li key={c}>{c}</li>)}</ul></details>
           <p className="text-xs leading-relaxed text-muted-foreground">{kit.limitation}</p>
         </div>
