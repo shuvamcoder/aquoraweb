@@ -73,7 +73,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
 
       waterways.forEach((w) => {
         L.circleMarker([w.lat, w.lon], {radius:6,color:primary,fillColor:primary,fillOpacity:0.8,weight:1})
-          .bindPopup(`<b>${esc(w.name)}</b><br/>${w.type} · ${esc(w.region)}<br/><small>Catalog location only · no assumed readings</small><br/><small>Select for nearby USGS observations</small>`)
+          .bindPopup(`<b>${esc(w.name)}</b><br/>${w.type} · ${esc(w.region)}<br/><small>Select to see nearby live readings</small>`)
           .addTo(map).on("click", () => setSelected(catalogObservation(w)));
       });
 
@@ -89,14 +89,14 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
 
       const fetchWater = () => {
         const z = map.getZoom();
-        if (z < 8) { osmLayer.current?.clearLayers(); setStatus("Waterway locations are shown on the base map. Zoom in for clickable OpenStreetMap features."); return; }
+        if (z < 8) { osmLayer.current?.clearLayers(); setStatus("Zoom in to explore named lakes and rivers."); return; }
         const b = map.getBounds();
         const bbox = `${b.getSouth()},${b.getWest()},${b.getNorth()},${b.getEast()}`;
         const nameFilter = z < 11 ? `["name"]` : "";
         const q = `[out:json][timeout:25];(nwr["natural"~"^(water|wetland|bay|spring)$"]${nameFilter}(${bbox});nwr["landuse"="reservoir"]${nameFilter}(${bbox});way["waterway"~"^(river|stream|canal|brook|creek|drain|ditch|tidal_channel)$"]${nameFilter}(${bbox});node["natural"="spring"](${bbox}););out center tags;`;
         ctrl?.abort();
         ctrl = new AbortController();
-        setStatus("Loading available waterways in this area…");
+        setStatus("Loading waterways in this area…");
         fetch("https://overpass-api.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(q), signal: ctrl.signal })
           .then((r) => r.json())
           .then((d: { elements: { id: number; type: string; center?: { lat: number; lon: number }; lat?: number; lon?: number; tags?: Record<string, string> }[] }) => {
@@ -108,10 +108,10 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
               n++;
               const name = (e.tags?.["name"] ?? "Unnamed").replace(/</g, "&lt;");
               L.circleMarker([lat, lon], { radius: 4, color: accent, fillColor: accent, fillOpacity: 0.8, weight: 1 })
-                .bindPopup(`<b>${name}</b><br/>${label(e.tags)}<br/><small>From OpenStreetMap · no readings yet</small>`)
-                .addTo(osmLayer.current ?? map).on("click", () => setSelected({ id: `osm-${e.type}-${e.id}`, name, source: "OpenStreetMap · location only", lat, lon }));
+                .bindPopup(`<b>${name}</b><br/>${label(e.tags)}<br/><small>Select to see nearby live readings</small>`)
+                .addTo(osmLayer.current ?? map).on("click", () => setSelected({ id: `osm-${e.type}-${e.id}`, name, source: "Mapped waterway · location only", lat, lon }));
             });
-            setStatus(`${n} waterways found in this view${z < 11 ? " (zoom in further to include unnamed ponds and streams)" : ""}.`);
+            setStatus(`${n} waterways in this view${z < 11 ? " — zoom in for smaller ponds and streams" : ""}.`);
           })
           .catch((err) => { if (err.name !== "AbortError") setStatus("Waterway lookup is busy — move the map to try again."); });
       };
@@ -200,7 +200,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
           <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Find a map location" placeholder="Find a place — e.g. Lake Geneva" className="min-w-0 flex-1 rounded-full border border-input bg-card px-5 py-2.5 outline-none focus:border-primary" />
           <Button type="submit">Go</Button>
         </form>
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-sm"><label htmlFor={preview ? "preview-measurement" : "map-measurement"}>USGS measurement</label><select id={preview ? "preview-measurement" : "map-measurement"} value={measurement} onChange={e => setMeasurement(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2"><option value="all">All available</option><option value="oxygen">Dissolved oxygen</option><option value="temperature">Temperature</option><option value="ph">pH</option><option value="conductance">Specific conductance</option><option value="streamflow">Streamflow</option></select></div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-sm"><label htmlFor={preview ? "preview-measurement" : "map-measurement"}>Show stations measuring</label><select id={preview ? "preview-measurement" : "map-measurement"} value={measurement} onChange={e => setMeasurement(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2"><option value="all">All available</option><option value="oxygen">Dissolved oxygen</option><option value="temperature">Temperature</option><option value="ph">pH</option><option value="conductance">Specific conductance</option><option value="streamflow">Streamflow</option></select></div>
         <div className={`relative overflow-hidden rounded-lg border border-border ${addMode ? "cursor-crosshair ring-2 ring-primary" : ""}`}>
           <div ref={el} aria-label="Interactive waterway map" className={preview ? "h-[380px] w-full" : "h-[480px] w-full sm:h-[620px]"} />
         </div>
@@ -247,13 +247,14 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
         </div>
 
         <div className="rounded-lg border border-border bg-card p-5 text-sm">
-          <h4 className="font-medium">Legend</h4>
+          <h4 className="font-medium">On the map</h4>
           <ul className="mt-2 space-y-1.5 text-muted-foreground">
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Catalog locations · no readings</li>
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> USGS stations · recorded values</li>
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-accent ring-1 ring-primary/40" /> Waterways from OpenStreetMap</li>
-            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-warn" /> Added by you</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-good" /> Live monitoring stations</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-primary" /> Featured waterways</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-accent ring-1 ring-primary/40" /> Mapped lakes and rivers</li>
+            <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-warn" /> Your pins</li>
           </ul>
+          <p className="mt-3 text-xs text-muted-foreground">Live readings come from U.S. Geological Survey monitoring stations.</p>
         </div>
 
         {spots.length > 0 && (
