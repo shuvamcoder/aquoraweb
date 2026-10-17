@@ -11,7 +11,7 @@
 
 - Normalize catalog, agency and manually entered measurements through `Observation` before rendering `WaterProfile`, so source, missing values and comparison eligibility remain consistent.
 - Saved-place bookmarks are explicitly session-only in-memory snapshots until persistent accounts are connected; do not imply storage across reloads or automatic alerts.
-- Source shared product images, component lists and budget labels from the product catalog to keep home and product views consistent.
+- Source shared product images, component lists and displayed prices from the product catalog to keep home and collection views consistent.
 - Keep kit selection hash-addressable on `/product` and show one selected kit at a time, so homepage links and browser history retain the chosen kit without repeating long sections.
 - Treat catalog waterways as location references only; public measurements and history must originate from agency responses or explicitly user-entered observations.
 - Request public USGS history directly from its unauthenticated OGC endpoint; normalize finite observations by sensor series and disclose response limits rather than fabricate gaps.

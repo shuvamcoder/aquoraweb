@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Droplets } from "lucide-react";
 
 const links = [
-  { to: "/explore", label: "Explore waterways" },
-  { to: "/map", label: "World map" },
-  { to: "/product", label: "Products" },
+  { to: "/explore", label: "Discover" },
+  { to: "/map", label: "Atlas" },
+  { to: "/product", label: "Collection" },
 ] as const;
 
 export function SiteHeader() {
@@ -36,11 +36,11 @@ export function SiteFooter() {
             <p className="mt-3 text-sm text-muted-foreground">Water Intelligence for a Healthier World.</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-primary">Products</p>
+             <p className="text-xs uppercase tracking-widest text-primary">Collection</p>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>AquaTrack — water checker</li>
-              <li>AquaPure — water treatment</li>
-              <li>AquaSync — both in one</li>
+              <li>AquaTrack</li>
+              <li>AquaPure</li>
+              <li>AquaSync</li>
             </ul>
           </div>
           <div>
