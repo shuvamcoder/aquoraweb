@@ -16,3 +16,7 @@
 - Treat catalog waterways as location references only; public measurements and history must originate from agency responses or explicitly user-entered observations.
 - Request public USGS history directly from its unauthenticated OGC endpoint; normalize finite observations by sensor series and disclose response limits rather than fabricate gaps.
 - Recover stale lazy-loaded assets with a rate-limited browser reload and a full-reload retry button so old open tabs can reach the current deployment.
+
+- Normalize USGS station records by parameter code with per-metric timestamps and newest finite values; this prevents incomplete profiles and mixed sensor ages.
+- Bound public USGS pagination and disclose partial responses; nearby station observations stay separate from catalog locations to avoid false attribution.
+- Use shared aquatic-life screening rules for measurement tags; never apply universal good/bad labels to context-dependent measurements.
