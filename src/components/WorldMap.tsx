@@ -209,7 +209,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
       </div>
 
       {!preview && <aside className="min-w-0 space-y-6">
-        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2><WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
+        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2>{hasMeasurements(selected) && <WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />}{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
         <div className="rounded-lg border border-border bg-card p-5">
           <h3 className="font-display text-2xl">Add a waterway</h3>
           {!addMode && !draft && (

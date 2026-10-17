@@ -41,6 +41,7 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
 
       <div className="rounded-lg border border-border p-5">
         <h4 className="flex items-center gap-2 font-display text-xl"><Radio className="h-5 w-5 text-primary" /> Sensing network</h4>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Green: above the low-oxygen screen or within the freshwater pH range. Amber/red: screening concern. Gray: local context needed. Tags describe aquatic-life context, not drinking or swimming safety.</p>
         {u.isLoading ? <Loading /> : u.isError || u.data?.error ? (
           <div><p className="mt-2 text-sm text-muted-foreground">USGS data couldn't be loaded right now.</p><Button variant="outline" className="mt-3" onClick={() => u.refetch()}>Retry USGS</Button></div>
         ) : !u.data?.stations.length ? (
