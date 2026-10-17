@@ -20,7 +20,7 @@ function MapPage() {
     <div className="mx-auto max-w-6xl px-5 py-12">
       <p className="text-sm uppercase tracking-[0.2em] text-primary">Aquora / Atlas</p>
       <h1 className="mt-2 font-display text-5xl">American waters, mapped.</h1>
-      <p className="mt-2 max-w-2xl text-muted-foreground">Zoom in to load USGS stations and named lakes and rivers, search for a place, or pin a waterway you know. USGS covers the United States — global waterways are a future addition.</p>
+      <p className="mt-2 max-w-2xl text-muted-foreground">Zoom in to see live monitoring stations and named lakes and rivers, search for a place, or pin a waterway you know. Coverage is U.S. only for now — global waterways are a future addition.</p>
       <div className="mt-8"><WorldMap /></div>
     </div>
   );

@@ -41,11 +41,10 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
 
       <div className="rounded-lg border border-border p-5">
         <h4 className="flex items-center gap-2 font-display text-xl"><Radio className="h-5 w-5 text-primary" /> Sensing network</h4>
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Green: above the low-oxygen screen or within the freshwater pH range. Amber/red: screening concern. Gray: local context needed. Tags describe aquatic-life context, not drinking or swimming safety.</p>
         {u.isLoading ? <Loading /> : u.isError || u.data?.error ? (
-          <div><p className="mt-2 text-sm text-muted-foreground">USGS data couldn't be loaded right now.</p><Button variant="outline" className="mt-3" onClick={() => u.refetch()}>Retry USGS</Button></div>
+          <div><p className="mt-2 text-sm text-muted-foreground">Station readings couldn't be loaded right now.</p><Button variant="outline" className="mt-3" onClick={() => u.refetch()}>Try again</Button></div>
         ) : !u.data?.stations.length ? (
-          <p className="mt-2 text-sm text-muted-foreground">No USGS measurements returned near this location. USGS covers U.S. monitoring stations, not every waterway.</p>
+          <p className="mt-2 text-sm text-muted-foreground">No live stations reported near this location.</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
             {u.data.stations.map((s) => {
@@ -68,7 +67,7 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
           </ul>
         )}
         {u.data?.partial && <p className="mt-2 text-xs text-warn-foreground">Showing up to 12 nearby stations; response limits may apply.</p>}
-        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey · latest recorded readings (may be historical; check each date)</p>
+        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey · latest recorded readings — check each date</p>
       </div>
     </div>
   );
