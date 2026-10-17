@@ -15,3 +15,4 @@
 - Keep kit selection hash-addressable on `/product` and show one selected kit at a time, so homepage links and browser history retain the chosen kit without repeating long sections.
 - Treat catalog waterways as location references only; public measurements and history must originate from agency responses or explicitly user-entered observations.
 - Request public USGS history directly from its unauthenticated OGC endpoint; normalize finite observations by sensor series and disclose response limits rather than fabricate gaps.
+- Recover stale lazy-loaded assets with a rate-limited browser reload and a full-reload retry button so old open tabs can reach the current deployment.
