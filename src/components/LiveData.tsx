@@ -5,6 +5,10 @@ import { getUsgsNearby, getWeather } from "@/lib/live-data.functions";
 import { StationHistory } from "@/components/StationHistory";
 import { WaterProfile } from "@/components/WaterProfile";
 
+import { usgsObservation, usgsParameters } from "@/lib/usgs";
+import { MeasurementTag } from "@/components/MeasurementTag";
+import { Button } from "@/components/ui/button";
+
 const titleCase = (s: string) =>
   s.toLowerCase().replace(/\b([a-z])/g, (c) => c.toUpperCase()).replace(/\bNr\b/g, "near").replace(/\bAt\b/g, "at");
 
@@ -37,26 +41,24 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
 
       <div className="rounded-lg border border-border p-5">
         <h4 className="flex items-center gap-2 font-display text-xl"><Radio className="h-5 w-5 text-primary" /> Sensing network</h4>
-        {u.isLoading ? <Loading /> : u.data?.error ? (
-          <p className="mt-2 text-sm text-muted-foreground">USGS data couldn't be loaded right now. Please try again later.</p>
+        {u.isLoading ? <Loading /> : u.isError || u.data?.error ? (
+          <div><p className="mt-2 text-sm text-muted-foreground">USGS data couldn't be loaded right now.</p><Button variant="outline" className="mt-3" onClick={() => u.refetch()}>Retry USGS</Button></div>
         ) : !u.data?.stations.length ? (
-          <p className="mt-2 text-sm text-muted-foreground">No active USGS stations reporting near this waterway.</p>
+          <p className="mt-2 text-sm text-muted-foreground">No USGS measurements returned near this location. USGS covers U.S. monitoring stations, not every waterway.</p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
             {u.data.stations.map((s) => {
-              const reading = (code: string) => s.readings.find((r) => r.code === code);
-              const num = (code: string) => { const v = reading(code)?.value; return v != null ? Number(v) : undefined; };
               return (
               <li key={s.id} className="py-3">
                 <p className="text-sm font-medium">{titleCase(s.name)}</p>
                 <div className="mt-1.5 flex flex-wrap gap-2">
                   {s.readings.map((r) => (
-                    <span key={r.code} className="rounded-full bg-secondary px-2.5 py-1 text-xs">{r.label}: <b>{r.value}</b> {r.unit}<span className="ml-2 text-muted-foreground">{r.time && Number.isFinite(Date.parse(r.time)) ? new Date(r.time).toLocaleString() : "Date unavailable"}</span></span>
+                    <span key={r.code} className="rounded-md bg-secondary px-2.5 py-1 text-xs">{r.label}: <b>{r.value}</b> {r.unit} <MeasurementTag metric={usgsParameters[r.code]?.key ?? "temperature"} value={r.value} /><span className="ml-2 text-muted-foreground">{r.time && Number.isFinite(Date.parse(r.time)) ? new Date(r.time).toLocaleString() : "Date unavailable"}</span><span className="ml-2 text-muted-foreground">{r.approval}</span></span>
                   ))}
                 </div>
                 <details className="mt-3">
                   <summary className="cursor-pointer text-sm text-primary">Station fingerprint & comparison</summary>
-                  <div className="mt-4"><WaterProfile observation={{ id: `usgs-${s.id}`, name: titleCase(s.name), source: "USGS · provisional", lat, lon, time: s.readings[0]?.time, oxygen: num("00300"), temperature: num("00010"), ph: num("00400"), conductance: num("00095") }} /></div>
+                  <div className="mt-4"><WaterProfile observation={usgsObservation(s, titleCase(s.name))} /></div>
                 </details>
                 <details className="mt-3"><summary className="cursor-pointer text-sm text-primary">Explore recorded history</summary><StationHistory id={s.id} /></details>
               </li>
@@ -64,7 +66,8 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
             })}
           </ul>
         )}
-        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey Water Data (provisional, latest readings)</p>
+        {u.data?.partial && <p className="mt-2 text-xs text-warn-foreground">Showing up to 12 nearby stations; response limits may apply.</p>}
+        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey · latest recorded readings (may be historical; check each date)</p>
       </div>
     </div>
   );
