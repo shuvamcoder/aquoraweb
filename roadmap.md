@@ -1,4 +1,7 @@
 # Current work
+- [ ] Fix USGS measurement loading on map and discover; verify real readings and history.
+- [ ] Add explained color-coded measurement screening tags with tests.
+- [ ] Update prices and subtitles; add app overview and footer navigation; verify pages.
 - [x] Rename navigation and homepage wording; remove product role subtitles.
 - [x] Show catalog prices and align all three products and images with enclosed battery power.
 - [x] Resolve product page loading error and verify navigation, prices and selection.
