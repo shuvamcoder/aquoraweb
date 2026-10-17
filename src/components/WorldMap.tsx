@@ -119,13 +119,13 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
       let requestId = 0;
       const fetchUsgs = () => {
         const currentRequest = ++requestId;
-        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in to load USGS stations. USGS covers the United States; global waterways are a future addition."); return; }
+        if (map.getZoom() < 5) { usgsLayer.current?.clearLayers(); setUsgsStatus("Zoom in to see live monitoring stations."); return; }
         const b = map.getBounds();
-        setUsgsStatus("Loading USGS stations…");
+        setUsgsStatus("Loading live stations…");
         getUsgsInBox({ data: { w: Math.max(-180, b.getWest()), s: Math.max(-90, b.getSouth()), e: Math.min(180, b.getEast()), n: Math.min(90, b.getNorth()) } }).then((r) => {
           if (cancelled || currentRequest !== requestId) return;
           usgsLayer.current?.clearLayers();
-          if (r.error) { setUsgsStatus("USGS data is unavailable right now."); return; }
+          if (r.error) { setUsgsStatus("Live readings are unavailable right now."); return; }
           r.points.filter(pt => measurementRef.current === "all" || pt.readings.some(x => usgsParameters[x.code]?.key === measurementRef.current)).forEach((pt) => {
             const rows = pt.readings.map(x => {
               const tag = measurementStatus(usgsParameters[x.code]?.key ?? "temperature", x.value);
@@ -133,7 +133,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
               return `${x.label}: <b>${x.value} ${x.unit}</b> <span style="color:var(--${color})">● ${tag.label}</span><br/><small>${new Date(x.time).toLocaleString()} · ${esc(x.approval)}</small>`;
             }).join("<br/>");
             const m = L.circleMarker([pt.lat, pt.lon], { radius: 5, color: good, fillColor: good, fillOpacity: 0.9, weight: 1 })
-              .bindPopup(`<b>USGS ${pt.id}</b><br/>${rows}<br/><small>Latest reading ${pt.readings[0]?.time ? new Date(pt.readings[0].time).toLocaleString() : "Date unavailable"}</small>`)
+              .bindPopup(`<b>Station ${pt.id}</b><br/>${rows}<br/><small>Latest reading ${pt.readings[0]?.time ? new Date(pt.readings[0].time).toLocaleString() : "Date unavailable"}</small>`)
               .addTo(usgsLayer.current ?? map);
             const observation = usgsObservation(pt);
             m.on("click", () => setSelected(observation));
@@ -141,8 +141,8 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
               getUsgsName({ data: { id: pt.id } }).then((n) => { const name = n.name; if (name) { setSelected((current) => current?.id === observation.id ? { ...current, name } : current); m.setPopupContent(`<b>${esc(name)}</b><br/><small>${pt.id}</small><br/>${rows}<br/><small>Latest reading ${new Date(pt.readings[0]?.time ?? "").toLocaleString()}</small>`); } });
             });
           });
-          setUsgsStatus(`${r.points.length} USGS stations with recorded values in this view. U.S. coverage; check reading dates.${r.partial ? " Partial response — zoom in for more complete coverage." : ""}`);
-        }).catch(() => { if (!cancelled && currentRequest === requestId) setUsgsStatus("USGS data could not be loaded. Move the map to retry."); });
+          setUsgsStatus(`${r.points.length} live stations in this view — check each reading's date.${r.partial ? " Zoom in for the full picture." : ""}`);
+        }).catch(() => { if (!cancelled && currentRequest === requestId) setUsgsStatus("Live readings could not be loaded. Move the map to try again."); });
       };
       fetchWater();
       fetchUsgs();
