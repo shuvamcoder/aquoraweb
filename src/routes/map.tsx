@@ -56,27 +56,40 @@ function MapPage() {
         <p className="mt-2 max-w-2xl text-muted-foreground">Choose a place to see readings from the nearest monitoring stations.</p>
         <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
           <aside>
-            <input aria-label="Filter waterways" value={q} onChange={e => setQ(e.target.value)} placeholder="Filter by name or region" className="w-full rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
-            <ul className="mt-3 max-h-[520px] space-y-2 overflow-y-auto">
-              {list.map(x => (
-                <li key={x.id}>
-                  <Button variant="outline" onClick={() => setSel(x.id)} className={`h-auto w-full flex-col items-start whitespace-normal px-4 py-3 text-left ${w?.id === x.id ? "border-primary bg-secondary" : ""}`}>
-                    <span>{x.name}</span>
-                    <span className="text-xs font-normal text-muted-foreground">{x.region}</span>
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            <form onSubmit={searchAny} className="flex gap-2">
+              <input aria-label="Search waterways" value={q} onChange={e => { setQ(e.target.value); setFound(null); setSearchNote(""); }} placeholder="Search any U.S. lake or river" className="min-w-0 flex-1 rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
+              <Button type="submit" disabled={searching}>{searching ? "…" : "Go"}</Button>
+            </form>
+            {list.length > 0 && (
+              <ul className="mt-3 max-h-[520px] space-y-2 overflow-y-auto">
+                {list.map(x => (
+                  <li key={x.id}>
+                    <Button variant="outline" onClick={() => { setSel(x.id); setFound(null); }} className={`h-auto w-full flex-col items-start whitespace-normal px-4 py-3 text-left ${w?.id === x.id && !found ? "border-primary bg-secondary" : ""}`}>
+                      <span>{x.name}</span>
+                      <span className="text-xs font-normal text-muted-foreground">{x.region}</span>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!list.length && !found && !searching && <p className="mt-3 text-sm text-muted-foreground">{searchNote || "Not a featured water — press Go to search every U.S. waterway."}</p>}
           </aside>
           <div className="min-w-0">
-            {w ? (
+            {found ? (
+              <>
+                <p className="text-xs uppercase tracking-widest text-primary">Search result</p>
+                <h3 className="mt-2 font-display text-4xl">{found.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">Nearby stations may not represent this exact waterway. Follow local guidance for swimming and drinking.</p>
+                <LiveData key={`${found.lat},${found.lon}`} lat={found.lat} lon={found.lon} />
+              </>
+            ) : w ? (
               <>
                 <p className="text-xs uppercase tracking-widest text-primary">{w.region}</p>
                 <h3 className="mt-2 font-display text-4xl">{w.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">Nearby stations may not represent this exact waterway. Follow local guidance for swimming and drinking.</p>
                 <LiveData key={w.id} lat={w.lat} lon={w.lon} />
               </>
-            ) : <p className="py-8 text-muted-foreground">No waterways match. Try another name or region.</p>}
+            ) : <p className="py-8 text-muted-foreground">Search for any U.S. lake, river or bay above to see its live readings.</p>}
           </div>
         </div>
       </section>
