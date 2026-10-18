@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WorldMap } from "@/components/WorldMap";
 import { LiveData } from "@/components/LiveData";
 import { Button } from "@/components/ui/button";
@@ -28,21 +28,32 @@ function MapPage() {
   const [found, setFound] = useState<{ name: string; lat: number; lon: number } | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchNote, setSearchNote] = useState("");
-  const list = useMemo(() => waterways.filter(w => (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q]);
-  const w = list.find(x => x.id === sel) ?? list[0];
+  const request = useRef(0);
+  const w = waterways.find(x => x.id === sel) ?? waterways[0];
 
-  const searchAny = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const term = q.trim();
-    if (!term || list.length) { setFound(null); setSearchNote(""); return; }
-    setSearching(true); setSearchNote(""); setFound(null);
+  const searchWater = async (term: string) => {
+    if (!term.trim()) return;
+    const current = ++request.current;
+    setSearching(true); setSearchNote(""); setFound(null); setSel("");
     try {
       const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(term)}`);
+      if (!r.ok) throw new Error("Search unavailable");
       const d = await r.json() as { lat: string; lon: string; display_name: string }[];
-      if (d[0]) setFound({ name: d[0].display_name.split(",")[0] ?? term, lat: +d[0].lat, lon: +d[0].lon });
+      if (current !== request.current) return;
+      if (d[0] && Number.isFinite(+d[0].lat) && Number.isFinite(+d[0].lon)) setFound({ name: d[0].display_name.split(",")[0] ?? term, lat: +d[0].lat, lon: +d[0].lon });
       else setSearchNote("No U.S. waterway found with that name. Try a nearby city or a different spelling.");
-    } catch { setSearchNote("Search is unavailable right now. Try again in a moment."); }
-    setSearching(false);
+    } catch { if (current === request.current) setSearchNote("Search is unavailable right now. Try again in a moment."); }
+    if (current === request.current) setSearching(false);
+  };
+
+  useEffect(() => {
+    if (initial?.trim()) void searchWater(initial.trim());
+    return () => { request.current += 1; };
+  }, [initial]);
+
+  const searchAny = (e: React.FormEvent) => {
+    e.preventDefault();
+    void searchWater(q.trim());
   };
 
   return (
@@ -52,30 +63,29 @@ function MapPage() {
       <div className="mt-8"><WorldMap /></div>
 
       <section id="featured" className="mt-16 border-t border-border pt-12">
-        <h2 className="font-display text-4xl">Featured waters.</h2>
+        <h2 className="font-display text-4xl">Water horizons.</h2>
         <p className="mt-2 max-w-2xl text-muted-foreground">Choose a place to see readings from the nearest monitoring stations.</p>
         <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
           <aside>
-            <form onSubmit={searchAny} className="flex gap-2">
-              <input aria-label="Search waterways" value={q} onChange={e => { setQ(e.target.value); setFound(null); setSearchNote(""); }} placeholder="Search any U.S. lake or river" className="min-w-0 flex-1 rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
-              <Button type="submit" disabled={searching}>{searching ? "…" : "Go"}</Button>
-            </form>
-            {list.length > 0 && (
-              <ul className="mt-3 max-h-[520px] space-y-2 overflow-y-auto">
-                {list.map(x => (
+            <h3 className="font-display text-2xl">Popular waters.</h3>
+              <ul aria-label="Popular waters" className="mt-4 max-h-[520px] space-y-2 overflow-y-auto">
+                {waterways.map(x => (
                   <li key={x.id}>
-                    <Button variant="outline" onClick={() => { setSel(x.id); setFound(null); }} className={`h-auto w-full flex-col items-start whitespace-normal px-4 py-3 text-left ${w?.id === x.id && !found ? "border-primary bg-secondary" : ""}`}>
+                    <Button variant="outline" aria-pressed={w?.id === x.id && !found && !searching && !searchNote && !q.trim()} onClick={() => { request.current += 1; setSel(x.id); setFound(null); setSearching(false); setSearchNote(""); setQ(""); }} className={`h-auto w-full flex-col items-start whitespace-normal px-4 py-3 text-left ${w?.id === x.id && !found && !searching && !searchNote && !q.trim() ? "border-primary bg-secondary" : ""}`}>
                       <span>{x.name}</span>
                       <span className="text-xs font-normal text-muted-foreground">{x.region}</span>
                     </Button>
                   </li>
                 ))}
               </ul>
-            )}
-            {!list.length && !found && !searching && <p className="mt-3 text-sm text-muted-foreground">{searchNote || "Not a featured water — press Go to search every U.S. waterway."}</p>}
           </aside>
           <div className="min-w-0">
-            {found ? (
+            <h3 className="font-display text-2xl">Find your water.</h3>
+            <form onSubmit={searchAny} className="mt-4 mb-8 flex gap-2">
+              <input aria-label="Search waterways" value={q} onChange={e => { setQ(e.target.value); setSearchNote(""); }} placeholder="Search any U.S. lake, river or bay" className="min-w-0 flex-1 rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
+              <Button type="submit" disabled={searching || !q.trim()}>{searching ? "…" : "Go"}</Button>
+            </form>
+            {searching ? <p role="status" className="py-8 text-muted-foreground">Finding your water…</p> : searchNote ? <p role="status" className="py-8 text-muted-foreground">{searchNote}</p> : found ? (
               <>
                 <p className="text-xs uppercase tracking-widest text-primary">Search result</p>
                 <h3 className="mt-2 font-display text-4xl">{found.name}</h3>

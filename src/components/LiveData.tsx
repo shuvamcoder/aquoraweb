@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { ChevronDown, CloudSun, Loader2, Radio } from "lucide-react";
 import { getUsgsNearby, getWeather } from "@/lib/live-data.functions";
 import { StationHistory } from "@/components/StationHistory";
@@ -8,25 +9,28 @@ import { WaterProfile } from "@/components/WaterProfile";
 import { usgsObservation, usgsParameters } from "@/lib/usgs";
 import { MeasurementTag } from "@/components/MeasurementTag";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { StationLocationMap } from "@/components/StationLocationMap";
 
 const titleCase = (s: string) =>
   s.toLowerCase().replace(/\b([a-z])/g, (c) => c.toUpperCase()).replace(/\bNr\b/g, "near").replace(/\bAt\b/g, "at");
 
-function StationMiniMap({ lat, lon, name }: { lat: number; lon: number; name: string }) {
+function StationMiniMap({ lat, lon, name, onOpen }: { lat: number; lon: number; name: string; onOpen: () => void }) {
   const z = 9;
   const n = 2 ** z;
   const x = Math.floor(((lon + 180) / 360) * n);
   const latRad = (lat * Math.PI) / 180;
   const y = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
   return (
-    <span className="relative inline-block h-14 w-14 shrink-0 overflow-hidden rounded-md border border-border" role="img" aria-label={`Map showing the location of ${name}`}>
+    <Button variant="outline" aria-label={`View map for ${titleCase(name)}`} title="Expand map" onClick={e => { e.preventDefault(); e.stopPropagation(); onOpen(); }} className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md p-0">
       <img src={`https://tile.openstreetmap.org/${z}/${x}/${y}.png`} alt="" loading="lazy" className="h-full w-full object-cover" />
       <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-good ring-2 ring-background" />
-    </span>
+    </Button>
   );
 }
 
 export function LiveData({ lat, lon }: { lat: number; lon: number }) {
+  const [mapStation, setMapStation] = useState<{ lat: number; lon: number; name: string } | null>(null);
   const usgs = useServerFn(getUsgsNearby);
   const wx = useServerFn(getWeather);
   const u = useQuery({ queryKey: ["usgs", lat, lon], queryFn: () => usgs({ data: { lat, lon } }), staleTime: 5 * 60_000 });
@@ -67,7 +71,7 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
                 <details className="group">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-2">
                     <span className="flex min-w-0 items-center gap-3">
-                      <StationMiniMap lat={s.lat} lon={s.lon} name={s.name} />
+                      <StationMiniMap lat={s.lat} lon={s.lon} name={s.name} onOpen={() => setMapStation(s)} />
                       <span className="truncate text-sm font-medium">{titleCase(s.name)}</span>
                     </span>
                     <span className="flex items-center gap-2 text-xs text-muted-foreground">{s.readings.length} readings <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></span>
@@ -92,6 +96,14 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
         {u.data?.partial && <p className="mt-2 text-xs text-warn-foreground">Showing up to 12 nearby stations; response limits may apply.</p>}
         <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey</p>
       </div>
+      <Dialog open={mapStation !== null} onOpenChange={open => { if (!open) setMapStation(null); }}>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-3xl rounded-lg">
+          <DialogTitle className="pr-6">{mapStation ? titleCase(mapStation.name) : "Station location"}</DialogTitle>
+          <DialogDescription className="sr-only">Monitoring station location</DialogDescription>
+          {mapStation && <StationLocationMap lat={mapStation.lat} lon={mapStation.lon} />}
+          <p className="text-xs text-muted-foreground">Map © OpenStreetMap contributors</p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

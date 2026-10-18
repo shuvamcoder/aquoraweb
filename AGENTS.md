@@ -20,3 +20,5 @@
 - Normalize USGS station records by parameter code with per-metric timestamps and newest finite values; this prevents incomplete profiles and mixed sensor ages.
 - Bound public USGS pagination and disclose partial responses; nearby station observations stay separate from catalog locations to avoid false attribution.
 - Use shared aquatic-life screening rules for measurement tags; never apply universal good/bad labels to context-dependent measurements.
+- Keep the Atlas catalog selection independent of geocoded search, with stale-response guards so list clicks cannot be overwritten by pending searches.
+- Load the enlarged station map through a dedicated browser-initialized Leaflet component; it shows the exact station coordinates without duplicating the Atlas data controls.
