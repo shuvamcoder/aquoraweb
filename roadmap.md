@@ -17,3 +17,4 @@
 - [x] Simplify kit selection and descriptions; restore the homepage’s water-first focus and remove unwanted labels.
 
 - [x] Restore the original heading font, use Products labels, and simplify home and product wording.
+- [x] Remove manual test strips and the color chart from every product and all related copy.
