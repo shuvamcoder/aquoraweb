@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CloudSun, Loader2, Radio } from "lucide-react";
+import { ChevronDown, CloudSun, Loader2, Radio } from "lucide-react";
 import { getUsgsNearby, getWeather } from "@/lib/live-data.functions";
 import { StationHistory } from "@/components/StationHistory";
 import { WaterProfile } from "@/components/WaterProfile";
@@ -49,25 +49,31 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
           <ul className="mt-3 divide-y divide-border">
             {u.data.stations.map((s) => {
               return (
-              <li key={s.id} className="py-3">
-                <p className="text-sm font-medium">{titleCase(s.name)}</p>
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  {s.readings.map((r) => (
-                    <span key={r.code} className="rounded-md bg-secondary px-2.5 py-1 text-xs">{r.label}: <b>{r.value}</b> {r.unit} <MeasurementTag metric={usgsParameters[r.code]?.key ?? "temperature"} value={r.value} /><span className="ml-2 text-muted-foreground">{r.time && Number.isFinite(Date.parse(r.time)) ? new Date(r.time).toLocaleString() : "Date unavailable"}</span><span className="ml-2 text-muted-foreground">{r.approval}</span></span>
-                  ))}
-                </div>
-                <details className="mt-3">
-                  <summary className="cursor-pointer text-sm text-primary">Station fingerprint & comparison</summary>
-                  <div className="mt-4"><WaterProfile observation={usgsObservation(s, titleCase(s.name))} /></div>
+              <li key={s.id} className="py-2">
+                <details className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-2">
+                    <span className="text-sm font-medium">{titleCase(s.name)}</span>
+                    <span className="flex items-center gap-2 text-xs text-muted-foreground">{s.readings.length} readings <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></span>
+                  </summary>
+                  <ul className="mt-2 space-y-2">
+                    {s.readings.map((r) => (
+                      <li key={r.code} className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-secondary px-3 py-2 text-sm">
+                        <span>{r.label}</span>
+                        <span className="flex items-center gap-2"><b>{r.value}</b> <span className="text-xs text-muted-foreground">{r.unit}</span> <MeasurementTag metric={usgsParameters[r.code]?.key ?? "temperature"} value={r.value} /></span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-2 text-xs text-muted-foreground">Updated {new Date(usgsObservation(s).time ?? "").toLocaleDateString()}</p>
+                  <details className="mt-3"><summary className="cursor-pointer text-sm text-primary">What this water needs</summary><div className="mt-4"><WaterProfile observation={usgsObservation(s, titleCase(s.name))} /></div></details>
+                  <details className="mt-2"><summary className="cursor-pointer text-sm text-primary">History</summary><StationHistory id={s.id} /></details>
                 </details>
-                <details className="mt-3"><summary className="cursor-pointer text-sm text-primary">Explore recorded history</summary><StationHistory id={s.id} /></details>
               </li>
               );
             })}
           </ul>
         )}
         {u.data?.partial && <p className="mt-2 text-xs text-warn-foreground">Showing up to 12 nearby stations; response limits may apply.</p>}
-        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey · latest recorded readings — check each date</p>
+        <p className="mt-2 text-xs text-muted-foreground">Source: U.S. Geological Survey</p>
       </div>
     </div>
   );

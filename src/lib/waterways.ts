@@ -5,11 +5,11 @@ export type Waterway = {
 // Named U.S. location references, not monitoring stations or measured conditions.
 // USGS measurements cover the United States; global coverage is a future addition.
 export const waterways: Waterway[] = [
+  { id: "lake-ontario", name: "Lake Ontario", type: "Lake", region: "New York", lat: 43.6, lon: -77.9 },
   { id: "lake-superior", name: "Lake Superior", type: "Lake", region: "Minnesota / Michigan / Wisconsin", lat: 47.7, lon: -87.5 },
   { id: "lake-michigan", name: "Lake Michigan", type: "Lake", region: "Michigan / Wisconsin / Illinois", lat: 43.9, lon: -87.2 },
   { id: "lake-huron", name: "Lake Huron", type: "Lake", region: "Michigan", lat: 44.9, lon: -82.4 },
   { id: "lake-erie", name: "Lake Erie", type: "Lake", region: "Ohio / Pennsylvania / New York", lat: 42.2, lon: -81.2 },
-  { id: "lake-ontario", name: "Lake Ontario", type: "Lake", region: "New York", lat: 43.6, lon: -77.9 },
   { id: "mississippi-river", name: "Mississippi River", type: "River", region: "Louisiana", lat: 29.95, lon: -90.07 },
   { id: "missouri-river", name: "Missouri River", type: "River", region: "Missouri", lat: 38.82, lon: -90.12 },
   { id: "lake-tahoe", name: "Lake Tahoe", type: "Lake", region: "California / Nevada", lat: 39.09, lon: -120.04 },
