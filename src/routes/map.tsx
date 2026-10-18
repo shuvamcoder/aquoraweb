@@ -36,11 +36,14 @@ function MapPage() {
     const current = ++request.current;
     setSearching(true); setSearchNote(""); setFound(null); setSel("");
     try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(term)}`);
+      // Border lakes may be classified as Canadian even when they span U.S. waters.
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=10&bounded=1&viewbox=-180,72,-66,18&addressdetails=1&q=${encodeURIComponent(term)}`);
       if (!r.ok) throw new Error("Search unavailable");
-      const d = await r.json() as { lat: string; lon: string; display_name: string }[];
+      const d = await r.json() as { lat: string; lon: string; display_name: string; class?: string; type?: string; address?: { country_code?: string } }[];
       if (current !== request.current) return;
-      if (d[0] && Number.isFinite(+d[0].lat) && Number.isFinite(+d[0].lon)) setFound({ name: d[0].display_name.split(",")[0] ?? term, lat: +d[0].lat, lon: +d[0].lon });
+      const eligible = d.filter(place => !place.address?.country_code || place.address.country_code === "us" || (place.address.country_code === "ca" && ["lake", "river", "bay", "reservoir"].includes(place.type ?? "") && +place.lat >= 41 && +place.lat <= 49 && +place.lon >= -95 && +place.lon <= -67));
+      const place = eligible.find(place => ["water", "waterway", "natural"].includes(place.class ?? "")) ?? eligible[0];
+      if (place && Number.isFinite(+place.lat) && Number.isFinite(+place.lon)) setFound({ name: place.display_name.split(",")[0] ?? term, lat: +place.lat, lon: +place.lon });
       else setSearchNote("No U.S. waterway found with that name. Try a nearby city or a different spelling.");
     } catch { if (current === request.current) setSearchNote("Search is unavailable right now. Try again in a moment."); }
     if (current === request.current) setSearching(false);
