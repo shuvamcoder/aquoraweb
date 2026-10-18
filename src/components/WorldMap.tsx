@@ -194,7 +194,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
   };
 
   return (
-    <div className={`grid gap-6 ${preview ? "" : "lg:grid-cols-[1fr_320px]"}`}>
+    <div className={"grid gap-6"}>
       <div>
         <form onSubmit={goSearch} className="mb-3 flex gap-2">
           <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Find a map location" placeholder="Find a place — e.g. Lake Geneva" className="min-w-0 flex-1 rounded-full border border-input bg-card px-5 py-2.5 outline-none focus:border-primary" />
@@ -208,8 +208,8 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
         <p className="text-sm text-muted-foreground">{usgsStatus}</p>
       </div>
 
-      {!preview && <aside className="min-w-0 space-y-6">
-        {selected && <div className="border-b border-border pb-6"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2>{hasMeasurements(selected) && <WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />}{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
+      {!preview && <aside className="grid min-w-0 items-start gap-6 md:grid-cols-2">
+        {selected && <div className="border-b border-border pb-6 md:col-span-2"><h2 className="mb-4 break-words font-display text-3xl">{selected.name}</h2>{hasMeasurements(selected) && <WaterProfile key={selected.id} observation={selected} onSelect={(o) => { setSelected(o); mapRef.current?.setView([o.lat, o.lon], 11); }} />}{selected.id.startsWith("usgs-") && <StationHistory id={selected.id.slice(5)} />}{!hasMeasurements(selected) && !selected.id.startsWith("usgs-") && <LiveData key={selected.id} lat={selected.lat} lon={selected.lon} />}</div>}
         <div className="rounded-lg border border-border bg-card p-5">
           <h3 className="font-display text-2xl">Add a waterway</h3>
           {!addMode && !draft && (
