@@ -12,6 +12,20 @@ import { Button } from "@/components/ui/button";
 const titleCase = (s: string) =>
   s.toLowerCase().replace(/\b([a-z])/g, (c) => c.toUpperCase()).replace(/\bNr\b/g, "near").replace(/\bAt\b/g, "at");
 
+function StationMiniMap({ lat, lon, name }: { lat: number; lon: number; name: string }) {
+  const z = 9;
+  const n = 2 ** z;
+  const x = Math.floor(((lon + 180) / 360) * n);
+  const latRad = (lat * Math.PI) / 180;
+  const y = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+  return (
+    <span className="relative inline-block h-14 w-14 shrink-0 overflow-hidden rounded-md border border-border" role="img" aria-label={`Map showing the location of ${name}`}>
+      <img src={`https://tile.openstreetmap.org/${z}/${x}/${y}.png`} alt="" loading="lazy" className="h-full w-full object-cover" />
+      <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-good ring-2 ring-background" />
+    </span>
+  );
+}
+
 export function LiveData({ lat, lon }: { lat: number; lon: number }) {
   const usgs = useServerFn(getUsgsNearby);
   const wx = useServerFn(getWeather);
@@ -52,7 +66,10 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
               <li key={s.id} className="py-2">
                 <details className="group">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-2">
-                    <span className="text-sm font-medium">{titleCase(s.name)}</span>
+                    <span className="flex min-w-0 items-center gap-3">
+                      <StationMiniMap lat={s.lat} lon={s.lon} name={s.name} />
+                      <span className="truncate text-sm font-medium">{titleCase(s.name)}</span>
+                    </span>
                     <span className="flex items-center gap-2 text-xs text-muted-foreground">{s.readings.length} readings <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" /></span>
                   </summary>
                   <ul className="mt-2 space-y-2">
