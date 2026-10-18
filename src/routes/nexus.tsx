@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Radio, MapPinned, ScanLine } from "lucide-react";
+import { ArrowRight, Play, Radio, MapPinned, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import phone from "@/assets/nexus-phone.jpg";
 import icon from "@/assets/nexus-icon.jpg";

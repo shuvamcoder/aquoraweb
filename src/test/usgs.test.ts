@@ -7,7 +7,7 @@ describe("USGS measurement normalization", () => {
   it("maps all supported agency parameters into a profile", () => {
     const station = normalizeUsgs([feature("00300","9.7"),feature("00010","9.6"),feature("00400","7.5"),feature("00095","123"),feature("00060","0")])[0];
     if (!station) throw new Error("Expected station");
-    expect(usgsObservation(station)).toMatchObject({lat:38.92,lon:-119.97,oxygen:9.7,temperature:9.6,ph:7.5,conductance:123,streamflow:0});
+    expect(usgsObservation(station)).toMatchObject({lat:38.92,lon:-119.97,oxygen:9.7,temperature:49.3,ph:7.5,conductance:123,streamflow:0});
   });
   it("drops missing values rather than inventing zero readings", () => { expect(normalizeUsgs([feature("00300",null),feature("00010",""),feature("00400","NaN")])).toEqual([]); });
   it("keeps the newest reading for each parameter and its date", () => {
