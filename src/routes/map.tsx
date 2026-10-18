@@ -25,8 +25,25 @@ function MapPage() {
   const { q: initial } = Route.useSearch();
   const [q, setQ] = useState(initial ?? "");
   const [sel, setSel] = useState("");
+  const [found, setFound] = useState<{ name: string; lat: number; lon: number } | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchNote, setSearchNote] = useState("");
   const list = useMemo(() => waterways.filter(w => (w.name + w.region + w.type).toLowerCase().includes(q.toLowerCase())), [q]);
   const w = list.find(x => x.id === sel) ?? list[0];
+
+  const searchAny = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const term = q.trim();
+    if (!term || list.length) { setFound(null); setSearchNote(""); return; }
+    setSearching(true); setSearchNote(""); setFound(null);
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(term)}`);
+      const d = await r.json() as { lat: string; lon: string; display_name: string }[];
+      if (d[0]) setFound({ name: d[0].display_name.split(",")[0] ?? term, lat: +d[0].lat, lon: +d[0].lon });
+      else setSearchNote("No U.S. waterway found with that name. Try a nearby city or a different spelling.");
+    } catch { setSearchNote("Search is unavailable right now. Try again in a moment."); }
+    setSearching(false);
+  };
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
