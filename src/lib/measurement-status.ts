@@ -17,10 +17,10 @@ export function measurementStatus(key: MetricKey, value: number | undefined): Me
     return { tone: "warn", label: "Alkaline", reason: "Above the 6.5–9 freshwater range suggested for aquatic life." };
   }
   if (key === "temperature") {
-    if (value < 5) return { tone: "muted", label: "Cold", reason: "Cold water holds more oxygen but slows aquatic life." };
-    if (value < 15) return { tone: "muted", label: "Cool", reason: "Cool water, typical of healthy streams and deep lakes." };
-    if (value < 25) return { tone: "muted", label: "Mild", reason: "A mild temperature comfortable for many species." };
-    if (value < 32) return { tone: "warn", label: "Warm", reason: "Warm water holds less oxygen; some species feel stress." };
+    if (value < 41) return { tone: "muted", label: "Cold", reason: "Cold water holds more oxygen but slows aquatic life." };
+    if (value < 59) return { tone: "muted", label: "Cool", reason: "Cool water, typical of healthy streams and deep lakes." };
+    if (value < 77) return { tone: "muted", label: "Mild", reason: "A mild temperature comfortable for many species." };
+    if (value < 90) return { tone: "warn", label: "Warm", reason: "Warm water holds less oxygen; some species feel stress." };
     return { tone: "destructive", label: "Hot", reason: "Very warm water holds little oxygen and stresses most aquatic life." };
   }
   if (key === "turbidity") {

@@ -10,7 +10,7 @@ export type Observation = {
 };
 export const metrics = [
   { key: "oxygen", label: "Dissolved oxygen", unit: "mg/L", max: 15, explanation: "Oxygen dissolved in water supports fish and other aquatic life. Below 5 mg/L can stress many fish; it does not determine drinking or swimming safety." },
-  { key: "temperature", label: "Water temperature", unit: "°C", max: 40, explanation: "Water temperature affects aquatic life and how much oxygen water can hold. Suitable temperatures depend on the species and location." },
+  { key: "temperature", label: "Water temperature", unit: "°F", max: 104, explanation: "Water temperature affects aquatic life and how much oxygen water can hold. Suitable temperatures depend on the species and location." },
   { key: "ph", label: "pH", unit: "", max: 14, explanation: "pH describes acidity on a scale of 0–14. A value of 7 is neutral. This reading alone cannot confirm water safety." },
   { key: "turbidity", label: "Turbidity", unit: "NTU", max: 100, explanation: "Turbidity measures cloudiness from suspended particles. Clear water can still contain harmful contaminants." },
   { key: "conductance", label: "Specific conductance", unit: "µS/cm at 25 °C", max: 2000, explanation: "Conductance reflects dissolved ions. Geology, salinity and human activity all affect it; higher values alone do not establish pollution." },

@@ -2,7 +2,7 @@ import type { Observation } from "@/lib/observations";
 
 export const usgsParameters: Record<string, { label: string; unit: string; key: "oxygen" | "temperature" | "ph" | "conductance" | "streamflow" }> = {
   "00300": { label: "Dissolved oxygen", unit: "mg/L", key: "oxygen" },
-  "00010": { label: "Water temperature", unit: "°C", key: "temperature" },
+  "00010": { label: "Water temperature", unit: "°F", key: "temperature" },
   "00400": { label: "pH", unit: "", key: "ph" },
   "00095": { label: "Specific conductance", unit: "µS/cm at 25 °C", key: "conductance" },
   "00060": { label: "Streamflow", unit: "ft³/s", key: "streamflow" },
@@ -15,7 +15,8 @@ export function normalizeUsgs(features: UsgsFeature[]): UsgsRecord[] {
   const stations = new Map<string, UsgsRecord>();
   for (const f of features) {
     const p = f.properties, code = String(p['parameter_code'] ?? ''), meta = usgsParameters[code];
-    const value = p['value'] == null || String(p['value']).trim() === '' ? NaN : Number(p['value']);
+    const raw = p['value'] == null || String(p['value']).trim() === '' ? NaN : Number(p['value']);
+    const value = code === '00010' && Number.isFinite(raw) ? Math.round((raw * 9 / 5 + 32) * 10) / 10 : raw;
     const lat = f.geometry?.coordinates?.[1], lon = f.geometry?.coordinates?.[0];
     const id = String(p['monitoring_location_id'] ?? ''), time = String(p['time'] ?? '');
     if (!meta || !id || !Number.isFinite(value) || !Number.isFinite(Date.parse(time)) || lat == null || lon == null || !Number.isFinite(lat) || !Number.isFinite(lon)) continue;

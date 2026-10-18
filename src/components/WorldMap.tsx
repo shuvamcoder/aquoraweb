@@ -161,7 +161,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
     if (!L || !layer) return;
     layer.clearLayers();
     spots.forEach((s) => {
-      const stats = [["Oxygen", s.do, "mg/L"], ["Water temp", s.temp, "°C"], ["pH", s.ph, ""], ["Turbidity", s.turbidity, "NTU"]].filter(([, v]) => v).map(([k, v, u]) => `${k}: <b>${esc(v ?? "")} ${u}</b>`).join("<br/>");
+      const stats = [["Oxygen", s.do, "mg/L"], ["Water temp", s.temp, "°F"], ["pH", s.ph, ""], ["Turbidity", s.turbidity, "NTU"]].filter(([, v]) => v).map(([k, v, u]) => `${k}: <b>${esc(v ?? "")} ${u}</b>`).join("<br/>");
       const imp = improvement(Number(s.doBefore) || undefined, Number(s.do) || undefined);
       L.circleMarker([s.lat, s.lng], { radius: 8, color: getComputedStyle(document.documentElement).getPropertyValue("--warn").trim(), fillColor: getComputedStyle(document.documentElement).getPropertyValue("--warn").trim(), fillOpacity: 0.95, weight: 2 })
         .bindPopup(`<b>${esc(s.name)}</b><br/>${s.type} · added by you${stats ? `<br/>${stats}` : "<br/><small>No readings added</small>"}${imp !== null ? `<br/><b style="color:${imp >= 0 ? "var(--good)" : "var(--destructive)"}">Oxygen ${imp >= 0 ? "+" : ""}${imp}% between your readings</b>` : ""}${s.note ? `<br/>${esc(s.note)}` : ""}`)
@@ -233,7 +233,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
               </select>
               <p className="pt-1 text-xs text-muted-foreground">Readings (all optional)</p>
               <div className="grid grid-cols-2 gap-2">
-                {([["do", "Oxygen mg/L"], ["temp", "Temp °C"], ["ph", "pH"], ["turbidity", "Turbidity NTU"], ["doBefore", "Oxygen before treatment"]] as const).map(([k, ph]) => (
+                {([["do", "Oxygen mg/L"], ["temp", "Temp °F"], ["ph", "pH"], ["turbidity", "Turbidity NTU"], ["doBefore", "Oxygen before treatment"]] as const).map(([k, ph]) => (
                   <input aria-label={ph} key={k} inputMode="decimal" value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value.replace(/[^0-9.]/g, "") })} placeholder={ph} className={`rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary ${k === "doBefore" ? "col-span-2" : ""}`} />
                 ))}
               </div>

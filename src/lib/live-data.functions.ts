@@ -48,12 +48,12 @@ export const getWeather = createServerFn({ method: "GET" })
       let seaTemp: number | null = null;
       try {
         const m = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${data.lat}&longitude=${data.lon}&current=sea_surface_temperature`);
-        if (m.ok) { const mj = (await m.json()) as { current?: { sea_surface_temperature?: number | null } }; seaTemp = mj.current?.sea_surface_temperature ?? null; }
+        if (m.ok) { const mj = (await m.json()) as { current?: { sea_surface_temperature?: number | null } }; const sst = mj.current?.sea_surface_temperature; seaTemp = sst != null ? Math.round((sst * 9 / 5 + 32) * 10) / 10 : null; }
       } catch { /* inland waters have no marine data */ }
       return {
         weather: {
-          temperature_2m: j.main?.temp ?? null,
-          wind_speed_10m: j.wind?.speed != null ? Math.round(j.wind.speed * 3.6 * 10) / 10 : null,
+          temperature_2m: j.main?.temp != null ? Math.round((j.main.temp * 9 / 5 + 32) * 10) / 10 : null,
+          wind_speed_10m: j.wind?.speed != null ? Math.round(j.wind.speed * 2.23694 * 10) / 10 : null,
           precipitation: j.rain?.["1h"] ?? 0,
           cloud_cover: j.clouds?.all ?? null,
           description: j.weather?.[0]?.description ?? null,
