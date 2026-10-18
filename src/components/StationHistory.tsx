@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function StationHistory({ id }: { id: string }) {
   const [code,setCode] = useState("00300"); const [days,setDays] = useState("7");
-  const params = [{code:"00300",label:"Dissolved oxygen",unit:"mg/L"},{code:"00010",label:"Temperature",unit:"°C"},{code:"00400",label:"pH",unit:""},{code:"00095",label:"Specific conductance",unit:"µS/cm"},{code:"00060",label:"Streamflow",unit:"ft³/s"}];
+  const params = [{code:"00300",label:"Dissolved oxygen",unit:"mg/L"},{code:"00010",label:"Temperature",unit:"°F"},{code:"00400",label:"pH",unit:""},{code:"00095",label:"Specific conductance",unit:"µS/cm"},{code:"00060",label:"Streamflow",unit:"ft³/s"}];
   const param = params.find(p => p.code === code) ?? params[0];
   const q = useQuery({queryKey:["usgs-history",id,code,days],queryFn:async () => {
     const end = new Date();

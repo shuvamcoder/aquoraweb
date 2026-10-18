@@ -25,11 +25,11 @@ export function LiveData({ lat, lon }: { lat: number; lon: number }) {
         {w.isLoading ? <Loading /> : w.data?.weather ? (
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 text-sm">
             {[
-              ["Air", w.data.weather.temperature_2m != null ? `${w.data.weather.temperature_2m}°C` : "—"],
-              ["Wind", w.data.weather.wind_speed_10m != null ? `${w.data.weather.wind_speed_10m} km/h` : "—"],
+              ["Air", w.data.weather.temperature_2m != null ? `${w.data.weather.temperature_2m}°F` : "—"],
+              ["Wind", w.data.weather.wind_speed_10m != null ? `${w.data.weather.wind_speed_10m} mph` : "—"],
               ["Rain", `${w.data.weather.precipitation} mm`],
               ["Clouds", w.data.weather.cloud_cover != null ? `${w.data.weather.cloud_cover}%` : "—"],
-              ...(w.data.weather.sea_surface_temperature != null ? [["Sea surface", `${w.data.weather.sea_surface_temperature}°C`] as string[]] : []),
+              ...(w.data.weather.sea_surface_temperature != null ? [["Sea surface", `${w.data.weather.sea_surface_temperature}°F`] as string[]] : []),
             ].map(([k, v]) => (
               <div key={k} className="rounded-md bg-secondary p-3"><div className="text-xs text-muted-foreground">{k}</div><div className="font-medium">{v}</div></div>
             ))}

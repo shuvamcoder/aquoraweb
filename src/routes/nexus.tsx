@@ -32,7 +32,13 @@ function Nexus() {
                 <p className="font-display text-xl leading-tight">Apple App Store</p>
               </div>
             </div>
-            <Button asChild size="lg"><Link to="/map">Enter atlas <ArrowRight /></Link></Button>
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3">
+              <Play className="h-8 w-8 text-primary" fill="currentColor" />
+              <div>
+                <p className="text-xs text-muted-foreground">Get it on</p>
+                <p className="font-display text-xl leading-tight">Google Play</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="relative">
