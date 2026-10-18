@@ -1,15 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
-import { useMemo, useState } from "react";
-import { waterways } from "@/lib/waterways";
-import { LiveData } from "@/components/LiveData";
-import { Button } from "@/components/ui/button";
-export const Route = createFileRoute("/explore")({ validateSearch: z.object({ q: z.string().optional() }), head: () => ({meta: [
- {title: "Discover — Aquora"}, {name: "description", content: "Find U.S. waterways and explore actual nearby USGS station readings, units and timestamps. No invented conditions or trends."}, {property: "og:title", content: "Discover — Aquora"}, {property: "og:description", content: "Real USGS observations across the United States, with transparent data availability."}, {property: "og:type", content: "website"}, {name: "twitter:card", content: "summary_large_image"},
-]}), component: Explore });
-function Explore() {
- const {q:initial} = Route.useSearch(); const [q,setQ] = useState(initial ?? ""); const [sel,setSel] = useState("");
- const list = useMemo(() => waterways.filter(w => (w.name+w.region+w.type).toLowerCase().includes(q.toLowerCase())),[q]);
- const w = list.find(x => x.id === sel) ?? list[0];
- return <div className="mx-auto max-w-6xl px-5 py-12"><h1 className="font-display text-5xl">Find your connection.</h1><p className="mt-4 max-w-2xl text-muted-foreground">Find a location, then explore live measurements from nearby monitoring stations. Coverage is U.S. only for now — global waterways are a future addition. A nearby station may not represent the exact waterway you picked.</p><div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr]"><aside><input aria-label="Filter waterways" value={q} onChange={e => setQ(e.target.value)} placeholder="Filter by name or region" className="w-full rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" /><p className="mt-3 text-xs text-muted-foreground">{list.length} locations</p><ul className="mt-3 max-h-[640px] space-y-2 overflow-y-auto">{list.map(x => <li key={x.id}><Button variant="outline" onClick={() => setSel(x.id)} className={`h-auto w-full flex-col items-start whitespace-normal px-4 py-3 text-left ${w?.id === x.id ? "border-primary bg-secondary" : ""}`}><span>{x.name}</span><span className="text-xs font-normal text-muted-foreground">{x.type} · {x.region}</span></Button></li>)}</ul></aside><section className="min-w-0">{w ? <><p className="text-xs uppercase tracking-widest text-primary">{w.type} · {w.region}</p><h2 className="mt-3 font-display text-4xl">{w.name}</h2><p className="mt-3 text-sm text-muted-foreground">Location reference only — no assumed readings, advisories or treatment results. Check local authorities for recreation and drinking-water guidance.</p><LiveData key={w.id} lat={w.lat} lon={w.lon} /></> : <p className="py-8 text-muted-foreground">No waterways match your search. Try a different name or region.</p>}</section></div></div>;
-}
+
+// Discover was merged into Atlas; keep old links working.
+export const Route = createFileRoute("/explore")({
+  validateSearch: z.object({ q: z.string().optional() }),
+  beforeLoad: ({ search }) => { throw redirect({ to: "/map", search: { q: search.q }, hash: "featured", statusCode: 301 }); },
+});
