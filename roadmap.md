@@ -1,4 +1,5 @@
 # Current work
+- [ ] Make station mini maps expandable and separate popular-water selection from independent search; verify both flows.
 - [x] Fix USGS measurement loading on map and discover; verify real readings and history.
 - [x] Add explained color-coded measurement screening tags with tests.
 - [x] Update prices and subtitles; add app overview and footer navigation; verify pages.
