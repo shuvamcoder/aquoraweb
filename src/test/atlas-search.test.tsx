@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ComponentType } from "react";
-import { Route } from "@/routes/map";
+import { Route } from "@/routes/atlas";
 
 vi.mock("@/components/WorldMap", () => ({ WorldMap: () => null }));
 vi.mock("@/components/LiveData", () => ({ LiveData: ({ lat, lon }: { lat: number; lon: number }) => <output data-testid="coordinates">{lat},{lon}</output> }));
@@ -17,7 +17,7 @@ describe("Atlas independent water search", () => {
     render(<Page />);
     const list = screen.getByRole("list", { name: "Popular waters" });
     const count = list.querySelectorAll("li").length;
-    fireEvent.change(screen.getByRole("textbox", { name: "Search waterways" }), { target: { value: "Lake Ontario" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Search anywhere" }), { target: { value: "Lake Ontario" } });
     fireEvent.click(screen.getByRole("button", { name: "Go" }));
     await waitFor(() => expect(screen.getByTestId("coordinates")).toHaveTextContent("43.7,-77.8"));
     expect(fetch).toHaveBeenCalledWith(expect.stringContaining("q=Lake%20Ontario"));
