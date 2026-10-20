@@ -23,7 +23,7 @@ function Nexus() {
         <div>
           <h1 className="font-display text-5xl sm:text-6xl">The Aquora App</h1>
           <p className="mt-6 max-w-xl text-xl">Connected to every current.</p>
-          <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">For fishermen, kayakers and swimmers. Explore U.S. places, read public measurements and follow recorded change — from your phone.</p>
+          <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">Explore U.S. places, read public measurements and follow recorded change — from your phone.</p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3">
               <img src={icon} alt="Nexus app icon" width={816} height={816} className="h-12 w-12 rounded-xl" />
