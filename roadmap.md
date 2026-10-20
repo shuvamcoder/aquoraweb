@@ -20,3 +20,4 @@
 
 - [x] Restore the original heading font, use Products labels, and simplify home and product wording.
 - [x] Remove manual test strips and the color chart from every product and all related copy.
+- [x] Remove any "there's no fear" wording and state U.S.-only coverage once on Atlas only; verify.

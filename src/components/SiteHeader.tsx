@@ -46,7 +46,7 @@ export function SiteFooter() {
           <div>
             <p className="text-xs uppercase tracking-widest text-primary">Data sources</p>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>USGS Water Data — U.S. stations, provisional</li>
+              <li>USGS Water Data — public monitoring stations</li>
               <li>OpenWeather — atmosphere</li>
               <li>OpenStreetMap & Esri — waterway geography</li>
             </ul>
