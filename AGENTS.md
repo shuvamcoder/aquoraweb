@@ -22,3 +22,4 @@
 - Use shared aquatic-life screening rules for measurement tags; never apply universal good/bad labels to context-dependent measurements.
 - Keep the Atlas catalog selection independent of geocoded search, with stale-response guards so list clicks cannot be overwritten by pending searches.
 - Load the enlarged station map through a dedicated browser-initialized Leaflet component; it shows the exact station coordinates without duplicating the Atlas data controls.
+- Use `/atlas`, `/collection` and `/nexus` as canonical page addresses and redirect legacy addresses while preserving search and kit hashes, so existing bookmarks remain usable.

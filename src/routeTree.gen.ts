@@ -10,14 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AtlasRouteImport } from './routes/atlas'
+import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as MapRouteImport } from './routes/map'
 import { Route as NexusRouteImport } from './routes/nexus'
-import { Route as ProductRouteImport } from './routes/product'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtlasRoute = AtlasRouteImport.update({
+  id: '/atlas',
+  path: '/atlas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -25,58 +35,48 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MapRoute = MapRouteImport.update({
-  id: '/map',
-  path: '/map',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NexusRoute = NexusRouteImport.update({
   id: '/nexus',
   path: '/nexus',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductRoute = ProductRouteImport.update({
-  id: '/product',
-  path: '/product',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
-  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
-  '/product': typeof ProductRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
-  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
-  '/product': typeof ProductRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atlas': typeof AtlasRoute
+  '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
-  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
-  '/product': typeof ProductRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/explore' | '/map' | '/nexus' | '/product'
+  fullPaths: '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/map' | '/nexus' | '/product'
-  id: '__root__' | '/' | '/explore' | '/map' | '/nexus' | '/product'
+  to: '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
+  id: '__root__' | '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtlasRoute: typeof AtlasRoute
+  CollectionRoute: typeof CollectionRoute
   ExploreRoute: typeof ExploreRoute
-  MapRoute: typeof MapRoute
   NexusRoute: typeof NexusRoute
-  ProductRoute: typeof ProductRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -88,18 +88,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/atlas': {
+      id: '/atlas'
+      path: '/atlas'
+      fullPath: '/atlas'
+      preLoaderRoute: typeof AtlasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nexus': {
@@ -109,22 +116,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NexusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/product': {
-      id: '/product'
-      path: '/product'
-      fullPath: '/product'
-      preLoaderRoute: typeof ProductRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtlasRoute: AtlasRoute,
+  CollectionRoute: CollectionRoute,
   ExploreRoute: ExploreRoute,
-  MapRoute: MapRoute,
   NexusRoute: NexusRoute,
-  ProductRoute: ProductRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
