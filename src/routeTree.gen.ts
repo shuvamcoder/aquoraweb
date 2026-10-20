@@ -13,7 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AtlasRouteImport } from './routes/atlas'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as NexusRouteImport } from './routes/nexus'
+import { Route as ProductRouteImport } from './routes/product'
+import { Route as WorldmapRouteImport } from './routes/worldmap'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,9 +38,24 @@ const ExploreRoute = ExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NexusRoute = NexusRouteImport.update({
   id: '/nexus',
   path: '/nexus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductRoute = ProductRouteImport.update({
+  id: '/product',
+  path: '/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorldmapRoute = WorldmapRouteImport.update({
+  id: '/worldmap',
+  path: '/worldmap',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -46,14 +64,20 @@ export interface FileRoutesByFullPath {
   '/atlas': typeof AtlasRoute
   '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
+  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
+  '/product': typeof ProductRoute
+  '/worldmap': typeof WorldmapRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/atlas': typeof AtlasRoute
   '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
+  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
+  '/product': typeof ProductRoute
+  '/worldmap': typeof WorldmapRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,14 +85,42 @@ export interface FileRoutesById {
   '/atlas': typeof AtlasRoute
   '/collection': typeof CollectionRoute
   '/explore': typeof ExploreRoute
+  '/map': typeof MapRoute
   '/nexus': typeof NexusRoute
+  '/product': typeof ProductRoute
+  '/worldmap': typeof WorldmapRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
+  fullPaths:
+    | '/'
+    | '/atlas'
+    | '/collection'
+    | '/explore'
+    | '/map'
+    | '/nexus'
+    | '/product'
+    | '/worldmap'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
-  id: '__root__' | '/' | '/atlas' | '/collection' | '/explore' | '/nexus'
+  to:
+    | '/'
+    | '/atlas'
+    | '/collection'
+    | '/explore'
+    | '/map'
+    | '/nexus'
+    | '/product'
+    | '/worldmap'
+  id:
+    | '__root__'
+    | '/'
+    | '/atlas'
+    | '/collection'
+    | '/explore'
+    | '/map'
+    | '/nexus'
+    | '/product'
+    | '/worldmap'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,7 +128,10 @@ export interface RootRouteChildren {
   AtlasRoute: typeof AtlasRoute
   CollectionRoute: typeof CollectionRoute
   ExploreRoute: typeof ExploreRoute
+  MapRoute: typeof MapRoute
   NexusRoute: typeof NexusRoute
+  ProductRoute: typeof ProductRoute
+  WorldmapRoute: typeof WorldmapRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,11 +164,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nexus': {
       id: '/nexus'
       path: '/nexus'
       fullPath: '/nexus'
       preLoaderRoute: typeof NexusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product': {
+      id: '/product'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/worldmap': {
+      id: '/worldmap'
+      path: '/worldmap'
+      fullPath: '/worldmap'
+      preLoaderRoute: typeof WorldmapRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -124,7 +200,10 @@ const rootRouteChildren: RootRouteChildren = {
   AtlasRoute: AtlasRoute,
   CollectionRoute: CollectionRoute,
   ExploreRoute: ExploreRoute,
+  MapRoute: MapRoute,
   NexusRoute: NexusRoute,
+  ProductRoute: ProductRoute,
+  WorldmapRoute: WorldmapRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
