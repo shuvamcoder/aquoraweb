@@ -53,10 +53,10 @@ export function kitAdvice(o: Observation): KitAdvice[] {
     advice.push({ title: "This water is cloudy", body: "The AquaPure carbon filter cartridge traps fine particles and helps clear the water." });
   }
   if (o.ph != null && Number.isFinite(o.ph) && (o.ph < 6.5 || o.ph > 9)) {
-    advice.push({ title: "pH is out of balance", body: "Track it over time with AquaTrack before treating — a single reading can shift on its own." });
+    advice.push({ title: "pH is out of balance", body: "Check it with AquaTrack before treating — a single reading can shift on its own." });
   }
   if (advice.length === 0 && hasMeasurements(o)) {
-    advice.push({ title: "Looking good", body: "Nothing here calls for treatment. Keep an eye on it with AquaTrack and measure again later." });
+    advice.push({ title: "Looking good", body: "These readings alone do not establish safety or a need for treatment. Follow local guidance and check conditions again later." });
   }
   return advice;
 }

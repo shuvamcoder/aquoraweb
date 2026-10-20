@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { products } from "@/lib/products";
 
-export const Route = createFileRoute("/product")({
+export const Route = createFileRoute("/collection")({
   head: () => ({ meta: [
     { title: "The Collection — AquaTrack, AquaPure & AquaSync | Aquora" },
     { name: "description", content: "Meet AquaTrack for measuring water, AquaPure for aeration and carbon filtration, and AquaSync for both." },
@@ -41,7 +41,7 @@ function Kits() {
           {products.map(p => <img key={p.id} src={p.image} alt={`${p.name}`} width={1200} height={800} loading="eager" decoding="async" className={`absolute inset-0 h-full w-full rounded-lg object-contain transition-opacity duration-200 ${p.id === kit.id ? "opacity-100" : "pointer-events-none opacity-0"}`} />)}
         </figure>
         <div>
-          <div className="flex items-center justify-between gap-4"><h2 className="font-display text-4xl">{kit.name}</h2><p className="text-2xl text-primary">${kit.price.toFixed(2)}</p></div>
+          <div className="flex items-center justify-between gap-4"><h2 className="font-display text-4xl">{kit.name}</h2></div>
           <p className="mt-3 text-muted-foreground">{kit.description}</p><ul className="mt-6 space-y-3">{kit.features.map(f => <li key={f} className="flex gap-3 text-sm"><Check className="h-4 w-4 shrink-0 text-primary" />{f}</li>)}</ul>
           <details className="mt-6 border-t border-border py-4"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium">What's inside <ChevronDown className="h-4 w-4" /></summary><ul className="mt-4 space-y-2 text-sm text-muted-foreground">{kit.components.map(c => <li key={c}>{c}</li>)}</ul></details>
           <p className="text-xs leading-relaxed text-muted-foreground">{kit.limitation}</p>

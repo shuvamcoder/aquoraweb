@@ -3,8 +3,8 @@ import { Droplets } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const links = [
-  { to: "/map", label: "Atlas" },
-  { to: "/product", label: "Collection" },
+  { to: "/atlas", label: "Atlas" },
+  { to: "/collection", label: "Collection" },
   { to: "/nexus", label: "Nexus" },
 ] as const;
 

@@ -197,7 +197,7 @@ export function WorldMap({ preview = false }: { preview?: boolean }) {
     <div className={"grid gap-6"}>
       <div>
         <form onSubmit={goSearch} className="mb-3 flex gap-2">
-          <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Find a map location" placeholder="Find a place — e.g. Lake Geneva" className="min-w-0 flex-1 rounded-full border border-input bg-card px-5 py-2.5 outline-none focus:border-primary" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Find a map location" placeholder="Search anywhere" className="min-w-0 flex-1 rounded-full border border-input bg-card px-5 py-2.5 outline-none focus:border-primary" />
           <Button type="submit">Go</Button>
         </form>
         <div className="mb-3 flex flex-wrap items-center gap-2 text-sm"><label htmlFor={preview ? "preview-measurement" : "map-measurement"}>Show stations measuring</label><select id={preview ? "preview-measurement" : "map-measurement"} value={measurement} onChange={e => setMeasurement(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2"><option value="all">All available</option><option value="oxygen">Dissolved oxygen</option><option value="temperature">Temperature</option><option value="ph">pH</option><option value="conductance">Specific conductance</option><option value="streamflow">Streamflow</option></select></div>

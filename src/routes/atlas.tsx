@@ -6,7 +6,7 @@ import { LiveData } from "@/components/LiveData";
 import { Button } from "@/components/ui/button";
 import { waterways } from "@/lib/waterways";
 
-export const Route = createFileRoute("/map")({
+export const Route = createFileRoute("/atlas")({
   validateSearch: z.object({ q: z.string().optional() }),
   head: () => ({
     meta: [
@@ -44,7 +44,7 @@ function MapPage() {
       const eligible = d.filter(place => !place.address?.country_code || place.address.country_code === "us" || (place.address.country_code === "ca" && ["lake", "river", "bay", "reservoir"].includes(place.type ?? "") && +place.lat >= 41 && +place.lat <= 49 && +place.lon >= -95 && +place.lon <= -67));
       const place = eligible.find(place => ["water", "waterway", "natural"].includes(place.class ?? "")) ?? eligible[0];
       if (place && Number.isFinite(+place.lat) && Number.isFinite(+place.lon)) setFound({ name: place.display_name.split(",")[0] ?? term, lat: +place.lat, lon: +place.lon });
-      else setSearchNote("No U.S. waterway found with that name. Try a nearby city or a different spelling.");
+      else setSearchNote("No U.S. place found with that name. Try a nearby city or a different spelling.");
     } catch { if (current === request.current) setSearchNote("Search is unavailable right now. Try again in a moment."); }
     if (current === request.current) setSearching(false);
   };
@@ -62,7 +62,7 @@ function MapPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="font-display text-5xl">Every current, illuminated.</h1>
-      <p className="mt-2 max-w-2xl text-muted-foreground">Explore the map, or pick a featured waterway below to see its live readings. Coverage is U.S. only for now — global waterways are a future addition.</p>
+      <p className="mt-2 max-w-2xl text-muted-foreground">Explore the water around you. Coverage is U.S. only for now — global waterways are a future addition.</p>
       <div className="mt-8"><WorldMap /></div>
 
       <section id="featured" className="mt-16 border-t border-border pt-12">
@@ -83,12 +83,12 @@ function MapPage() {
               </ul>
           </aside>
           <div className="min-w-0">
-            <h3 className="font-display text-2xl">Find your water.</h3>
+            <h3 className="font-display text-2xl">Find your place.</h3>
             <form onSubmit={searchAny} className="mt-4 mb-8 flex gap-2">
-              <input aria-label="Search waterways" value={q} onChange={e => { setQ(e.target.value); setSearchNote(""); }} placeholder="Search any U.S. lake, river or bay" className="min-w-0 flex-1 rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
+              <input aria-label="Search anywhere" value={q} onChange={e => { setQ(e.target.value); setSearchNote(""); }} placeholder="Search anywhere" className="min-w-0 flex-1 rounded-md border border-input bg-card px-4 py-3 outline-none focus:border-primary" />
               <Button type="submit" disabled={searching || !q.trim()}>{searching ? "…" : "Go"}</Button>
             </form>
-            {searching ? <p role="status" className="py-8 text-muted-foreground">Finding your water…</p> : searchNote ? <p role="status" className="py-8 text-muted-foreground">{searchNote}</p> : found ? (
+            {searching ? <p role="status" className="py-8 text-muted-foreground">Finding your place…</p> : searchNote ? <p role="status" className="py-8 text-muted-foreground">{searchNote}</p> : found ? (
               <>
                 <p className="text-xs uppercase tracking-widest text-primary">Search result</p>
                 <h3 className="mt-2 font-display text-4xl">{found.name}</h3>
@@ -102,7 +102,7 @@ function MapPage() {
                 <p className="mt-2 text-sm text-muted-foreground">Nearby stations may not represent this exact waterway. Follow local guidance for swimming and drinking.</p>
                 <LiveData key={w.id} lat={w.lat} lon={w.lon} />
               </>
-            ) : <p className="py-8 text-muted-foreground">Search for any U.S. lake, river or bay above to see its live readings.</p>}
+            ) : <p className="py-8 text-muted-foreground">Search anywhere above to see nearby readings.</p>}
           </div>
         </div>
       </section>
