@@ -1,4 +1,5 @@
 # Current work
+- [x] Keep the home tagline and limit audience wording to the homepage audience section; verify.
 - [x] Update official branding, page addresses, app heading, outdoor audience and place search; remove all prices and repeated-use implications; verify.
 - [x] Make station mini maps expandable and separate popular-water selection from independent search; verify both flows.
 - [x] Fix USGS measurement loading on map and discover; verify real readings and history.
