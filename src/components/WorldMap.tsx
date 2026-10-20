@@ -14,11 +14,25 @@ type UserSpot = { id: string; name: string; type: string; note: string; lat: num
 const esc = (x: string) => x.replace(/[<>&]/g, "");
 const emptyForm = { name: "", type: "Lake", note: "", do: "", temp: "", ph: "", turbidity: "", doBefore: "" };
 const improvement = (before?: number, after?: number) => before && after ? Math.round(((after - before) / before) * 100) : null;
-const KEY = "aquasense-user-waterways";
+const KEY = "aquora-user-waterways";
 
 
 function loadSpots(): UserSpot[] {
-  try { return JSON.parse(localStorage.getItem(KEY) ?? "[]"); } catch { return []; }
+  try {
+    let saved = localStorage.getItem(KEY);
+    if (saved === null) {
+      const legacyKey = Object.keys(localStorage).find(key => key !== KEY && key.endsWith("-user-waterways"));
+      if (legacyKey) {
+        saved = localStorage.getItem(legacyKey);
+        if (saved !== null) {
+          JSON.parse(saved);
+          localStorage.setItem(KEY, saved);
+          localStorage.removeItem(legacyKey);
+        }
+      }
+    }
+    return JSON.parse(saved ?? "[]");
+  } catch { return []; }
 }
 
 export function WorldMap({ preview = false }: { preview?: boolean }) {
