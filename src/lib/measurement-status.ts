@@ -47,10 +47,10 @@ export type KitAdvice = { title: string; body: string };
 export function kitAdvice(o: Observation): KitAdvice[] {
   const advice: KitAdvice[] = [];
   if (o.oxygen != null && Number.isFinite(o.oxygen) && o.oxygen < 5) {
-    advice.push({ title: "This water needs air", body: "Oxygen is low. The AquaPure air pump pushes fresh air into the water to bring it back up." });
+    advice.push({ title: "This water needs air", body: "Oxygen is low. Adding air — for example with a small air pump — helps bring it back up." });
   }
   if (o.turbidity != null && Number.isFinite(o.turbidity) && o.turbidity >= 50) {
-    advice.push({ title: "This water is cloudy", body: "The AquaPure carbon filter cartridge traps fine particles and helps clear the water." });
+    advice.push({ title: "This water is cloudy", body: "Fine particles cloud the water. Gentle filtration can help clear it." });
   }
   if (o.ph != null && Number.isFinite(o.ph) && (o.ph < 6.5 || o.ph > 9)) {
     advice.push({ title: "pH is out of balance", body: "Check it with AquaTrack before treating — a single reading can shift on its own." });

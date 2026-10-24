@@ -1,44 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronDown, Check } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { products } from "@/lib/products";
 
 export const Route = createFileRoute("/collection")({
   head: () => ({ meta: [
-    { title: "The Collection — AquaTrack, AquaPure & AquaSync | Aquora" },
-    { name: "description", content: "Meet AquaTrack for measuring water, AquaPure for aeration and carbon filtration, and AquaSync for both." },
-    { property: "og:title", content: "The Aquora Collection" },
-    { property: "og:description", content: "Measure with AquaTrack. Treat with AquaPure. Bring both together with AquaSync." },
+    { title: "AquaTrack — Connected Water Sensing | Aquora" },
+    { name: "description", content: "Meet AquaTrack: four electronic sensors and a Bluetooth connection to your phone, for understanding your water." },
+    { property: "og:title", content: "AquaTrack — Connected Water Sensing" },
+    { property: "og:description", content: "Measure oxygen, temperature, pH and clarity with AquaTrack." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
-  ] }), component: Kits,
+  ] }), component: Collection,
 });
-function Kits() {
-  const [selected, setSelected] = useState<string>("aquasync");
-  useEffect(() => {
-    const syncHash = () => {
-      const id = window.location.hash.slice(1);
-      if (products.some(p => p.id === id)) setSelected(id);
-    };
-    syncHash();
-    window.addEventListener("hashchange", syncHash);
-    return () => window.removeEventListener("hashchange", syncHash);
-  }, []);
-  const kit = products.find(p => p.id === selected) ?? products[0];
+function Collection() {
+  const kit = products[0];
   return <div>
     <section className="mx-auto max-w-6xl px-5 pb-8 pt-12">
       <p className="text-xs uppercase tracking-widest text-primary">Aquora / Collection</p>
-      <h1 className="mt-4 font-display text-4xl sm:text-5xl">Measure. Treat. Or both.</h1>
-      <nav aria-label="Choose a product" className="mt-8 grid gap-3 sm:grid-cols-3">
-        {products.map(p => <Button key={p.id} asChild variant={p.id === selected ? "default" : "outline"} className="h-auto justify-start whitespace-normal px-5 py-4 text-left">
-          <a href={`#${p.id}`} onClick={() => setSelected(p.id)} aria-current={p.id === selected ? "true" : undefined}><span className="flex flex-col items-start gap-1"><span className="text-lg">{p.name}</span><span className={`text-xs font-normal ${p.id === selected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{p.description}</span></span></a>
-        </Button>)}
-      </nav>
+      <h1 className="mt-4 font-display text-4xl sm:text-5xl">Meet AquaTrack.</h1>
+      <p className="mt-4 max-w-2xl text-muted-foreground">{kit.description}</p>
     </section>
     <section id={kit.id} className="scroll-mt-24 border-y border-border bg-card/40">
       <div className="mx-auto grid max-w-6xl items-start gap-8 px-5 py-10 lg:grid-cols-[1.2fr_1fr]">
         <figure className="relative aspect-[3/2] w-full">
-          {products.map(p => <img key={p.id} src={p.image} alt={`${p.name}`} width={1200} height={800} loading="eager" decoding="async" className={`absolute inset-0 h-full w-full rounded-lg object-contain transition-opacity duration-200 ${p.id === kit.id ? "opacity-100" : "pointer-events-none opacity-0"}`} />)}
+          <img src={kit.image} alt={kit.name} width={1200} height={800} loading="eager" decoding="async" className="absolute inset-0 h-full w-full rounded-lg object-contain" />
         </figure>
         <div>
           <div className="flex items-center justify-between gap-4"><h2 className="font-display text-4xl">{kit.name}</h2></div>
