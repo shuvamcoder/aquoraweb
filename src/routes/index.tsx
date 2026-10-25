@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ProductCards } from "@/components/ProductCards";
 
 export const Route = createFileRoute("/")({ head: () => ({ meta: [
-  { title: "Aquora — Water Intelligence for a Healthier Use" },
+  { title: "Aquora — Water Intelligence for your next adventure" },
   { name: "description", content: "Explore waterways, understand real public water measurements, and follow changes with Aquora." },
-  { property: "og:title", content: "Aquora — Water Intelligence for a Healthier Use" },
+  { property: "og:title", content: "Aquora — Water Intelligence for your next adventure" },
   { property: "og:description", content: "Discover U.S. waterways and understand water conditions through public measurements." },
   { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
 ] }), component: Home });

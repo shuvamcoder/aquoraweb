@@ -34,7 +34,7 @@ export function SiteFooter() {
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
             <p className="flex items-center gap-2 font-display text-2xl"><Droplets className="h-5 w-5 text-primary" /> Aquora</p>
-            <p className="mt-3 text-sm text-muted-foreground">Water Intelligence for a Healthier Use.</p>
+            <p className="mt-3 text-sm text-muted-foreground">Water Intelligence for your next adventure.</p>
           </div>
           <div>
             <p className="text-xs uppercase tracking-widest text-primary">Explore Aquora</p>
